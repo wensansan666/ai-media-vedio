@@ -1,0 +1,20 @@
+{
+  "permissions": {
+    "allow": [
+      "PowerShell(Get-Command node -ErrorAction SilentlyContinue)",
+      "PowerShell(Get-Command npm -ErrorAction SilentlyContinue)",
+      "PowerShell($env:Path -split ';' | Where-Object { $_ -match 'node|npm|nvm|fnm' }; Get-ChildItem \"C:\\\\Program Files\\\\nodejs\" -ErrorAction SilentlyContinue | Select-Object Name; Get-ChildItem \"$env:LOCALAPPDATA\\\\fnm\" -ErrorAction SilentlyContinue | Select-Object Name; Get-ChildItem \"$env:APPDATA\\\\npm\" -ErrorAction SilentlyContinue | Select-Object Name)",
+      "PowerShell(Get-ChildItem \"C:\\\\Program Files\\\\nodejs\\\\node.exe\" -ErrorAction SilentlyContinue; Get-ChildItem \"C:\\\\Program Files \\(x86\\)\\\\nodejs\\\\node.exe\" -ErrorAction SilentlyContinue; Get-ChildItem \"$env:USERPROFILE\\\\.nvm\" -ErrorAction SilentlyContinue -Recurse -Depth 1; Get-ChildItem \"D:\\\\nodejs\" -ErrorAction SilentlyContinue)",
+      "PowerShell(node -v 2>&1)",
+      "PowerShell(npm -v 2>&1)",
+      "Read(//e/3Agent/视频平台prd/demo/**)",
+      "Read(//e/3Agent/��Ƶƽ̨prd/**)",
+      "PowerShell(npm run dev)",
+      "PowerShell(Start-Process \"http://localhost:5173/\")"
+    ],
+    "additionalDirectories": [
+      "e:\\3Agent\\��Ƶƽ̨prd\\demo\\cuchun\\src",
+      "e:\\3Agent\\��Ƶƽ̨prd\\demo"
+    ]
+  }
+}

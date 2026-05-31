@@ -1,0 +1,42 @@
+@import "tailwindcss";
+
+/* Custom scrollbar */
+.custom-scrollbar::-webkit-scrollbar { height: 0px; width: 0px; }
+
+/* Dot pattern for canvas */
+.dot-pattern { background-image: radial-gradient(rgba(0, 0, 0, 0.06) 1.5px, transparent 1.5px); background-size: 32px 32px; }
+
+/* Toast animation */
+@keyframes fadeInUp { from { opacity: 0; transform: translate(-50%, 20px); } to { opacity: 1; transform: translate(-50%, 0); } }
+.animate-fade-in-up { animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+
+/* Node control bar slide-up */
+@keyframes slideUpNode { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+.animate-slide-up-node { animation: slideUpNode 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+
+/* Toast dismiss animation */
+@keyframes fadeInDown { from { opacity: 0; transform: translate(-50%, -20px); } to { opacity: 1; transform: translate(-50%, 0); } }
+.animate-fade-in-down { animation: fadeInDown 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+
+/* General fade-in */
+@keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+.animate-fade-in { animation: fadeIn 0.3s ease-out forwards; }
+
+/* Tech grid for splash screen */
+.tech-grid { background-size: 40px 40px; background-image: linear-gradient(to right, rgba(99, 102, 241, 0.15) 1px, transparent 1px), linear-gradient(to bottom, rgba(99, 102, 241, 0.15) 1px, transparent 1px); animation: panGrid 10s linear infinite; }
+.mask-radial-fade { mask-image: radial-gradient(circle at center, black 20%, transparent 80%); -webkit-mask-image: radial-gradient(circle at center, black 20%, transparent 80%); }
+@keyframes panGrid { from { background-position: 0 0; } to { background-position: -40px -40px; } }
+
+/* Splash blobs */
+@keyframes blob1 { 0%, 100% { transform: translate(0px, 0px) scale(1); } 33% { transform: translate(8vw, -8vh) scale(1.1); } 66% { transform: translate(-4vw, 4vh) scale(0.9); } }
+@keyframes blob2 { 0%, 100% { transform: translate(0px, 0px) scale(1); } 33% { transform: translate(-8vw, 8vh) scale(1.2); } 66% { transform: translate(4vw, -4vh) scale(0.8); } }
+.animate-blob1 { animation: blob1 12s infinite alternate cubic-bezier(0.4, 0, 0.2, 1); }
+.animate-blob2 { animation: blob2 15s infinite alternate cubic-bezier(0.4, 0, 0.2, 1); }
+
+/* Slow spin */
+@keyframes spin-slow { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+.animate-spin-slow { animation: spin-slow 8s linear infinite; }
+
+/* Reveal up for splash title */
+@keyframes revealUp { from { transform: translateY(100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+.animate-reveal-up { animation: revealUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
