@@ -1,0 +1,6 @@
+name = "ai-media-vedio-api"
+main = "worker.js"
+compatibility_date = "2025-06-09"
+
+# 部署后在这里填你的 Worker 域名
+# 例如: https://ai-media-vedio-api.yourname.workers.dev

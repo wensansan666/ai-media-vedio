@@ -103,6 +103,11 @@ const MOCK_ASSETS = [
 ];
 
 // ==========================================
+// API 配置 — 部署 Worker 后替换为你的 Worker 地址
+// ==========================================
+const WORKER_URL = 'https://ai-media-vedio-api.wensansan.workers.dev';
+
+// ==========================================
 // 主应用组件
 // ==========================================
 export default function App() {
@@ -360,7 +365,16 @@ export default function App() {
     if (activeNode === id) setActiveNode(nodes[0]?.id || null);
   };
 
-  const handleGenerate = () => {
+  const callWorker = async (type, payload) => {
+    const resp = await fetch(WORKER_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ type, ...payload }),
+    });
+    return resp.json();
+  };
+
+  const handleGenerate = async () => {
     if (isGenerating) return;
     if (isApprovalFlowOn && nodes.find(n => n.id === activeNode)?.type === 'video') {
       showMessage("受控视频流属于高阶算力消耗，需甲方确认后渲染。", "error");
@@ -369,44 +383,88 @@ export default function App() {
     if (!prompt.trim()) { showMessage("请先在指令区输入提示词！", "error"); return; }
     const targetNodeIndex = nodes.findIndex(n => n.id === activeNode && n.status === 'empty');
     if (targetNodeIndex === -1) { showMessage("操作中断：当前节点非空，请先添加一个空白节点接收结果。", "error"); return; }
-    
+
     setIsGenerating(true);
+    const targetNode = nodes[targetNodeIndex];
     const newNodes = [...nodes];
     newNodes[targetNodeIndex].status = 'generating';
     setNodes(newNodes);
     setPrompt('');
-    setCredits(prev => prev - (nodes[targetNodeIndex].type === 'video' ? 50 : 10));
-    
-    const finalPrompt = `[${selectedStyle}] ${prompt}`; 
-    setTimeout(() => {
-      const updatedNodes = [...nodes];
-      const resImg = 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1000&auto=format&fit=crop';
-      updatedNodes[targetNodeIndex] = { ...newNodes[targetNodeIndex], status: 'completed', content: resImg, prompt: finalPrompt };
-      setNodes(updatedNodes);
-      setIsGenerating(false);
-      showMessage("资产渲染完毕，已自动归档至项目库。", "success");
-    }, 2500);
+    setCredits(prev => prev - (targetNode.type === 'video' ? 50 : 10));
+
+    const finalPrompt = `[${selectedStyle}] ${prompt}`;
+
+    try {
+      if (targetNode.type === 'image') {
+        // 调 Nano Banana 生成图片
+        const result = await callWorker('image', { prompt: finalPrompt });
+        if (result.success) {
+          const updatedNodes = [...nodes];
+          updatedNodes[targetNodeIndex] = { ...newNodes[targetNodeIndex], status: 'completed', content: result.image, prompt: finalPrompt };
+          setNodes(updatedNodes);
+          showMessage("AI 图片生成完毕！", "success");
+        } else {
+          newNodes[targetNodeIndex].status = 'empty';
+          setNodes(newNodes);
+          showMessage(result.error || "图片生成失败，请重试", "error");
+        }
+      } else if (targetNode.type === 'text') {
+        // 调 Gemini 扩写文本
+        const result = await callWorker('text', { prompt: finalPrompt, actionType: 'expand' });
+        if (result.success) {
+          const updatedNodes = [...nodes];
+          updatedNodes[targetNodeIndex] = { ...newNodes[targetNodeIndex], status: 'completed', content: result.text };
+          setNodes(updatedNodes);
+          showMessage("AI 文本生成完毕！", "success");
+        } else {
+          newNodes[targetNodeIndex].status = 'empty';
+          setNodes(newNodes);
+          showMessage(result.error || "文本生成失败", "error");
+        }
+      } else {
+        // video/audio 暂未接入真实 API，保留模拟
+        setTimeout(() => {
+          const updatedNodes = [...nodes];
+          const resImg = 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1000&auto=format&fit=crop';
+          updatedNodes[targetNodeIndex] = { ...newNodes[targetNodeIndex], status: 'completed', content: resImg, prompt: finalPrompt };
+          setNodes(updatedNodes);
+          showMessage("Demo 模拟渲染完毕。", "success");
+        }, 2500);
+        return;
+      }
+    } catch (err) {
+      newNodes[targetNodeIndex].status = 'empty';
+      setNodes(newNodes);
+      showMessage(`请求失败：${err.message}`, "error");
+    }
+    setIsGenerating(false);
   };
 
-  const handleAITextAction = (nodeId, actionType) => {
-    showMessage(`正在调用 AI 算力 ${actionType}...`, "info");
-    setTimeout(() => {
-      setNodes(prev => prev.map(n => {
-        if (n.id === nodeId) {
-          let newContent = n.content || '';
-          if (actionType === '智能扩写大纲') {
-            newContent = `【故事梗概】\n隐藏在全息投影背后的古老阴谋。\n\n【主要人物】\n1. K (侦探)：右眼佩戴着战损版义眼。\n2. 艾拉 (AI投影)：掌握着核心密钥。`;
-          } else if (actionType === '提炼英文提示词') {
-            newContent = "Masterpiece, solitary detective, abandoned Mars base, slow push-in camera, 8k resolution, photorealistic.";
-          } else if (actionType === '润色剧本语气') {
-            newContent = "【悬疑氛围】" + newContent.replace('孤独的侦探', '目光深邃的调查员');
-          }
-          return { ...n, content: newContent };
-        }
-        return n;
-      }));
-      showMessage(`AI ${actionType} 完成！`, "success");
-    }, 1500);
+  const handleAITextAction = async (nodeId, actionType) => {
+    const node = nodes.find(n => n.id === nodeId);
+    if (!node?.content) return;
+    showMessage(`正在调用 AI ${actionType}...`, "info");
+
+    const actionMap = {
+      '智能扩写大纲': 'expand',
+      '提炼英文提示词': 'english_prompt',
+      '润色剧本语气': 'polish',
+    };
+
+    try {
+      const result = await callWorker('text', {
+        prompt: node.content,
+        actionType: actionMap[actionType] || 'expand'
+      });
+      if (result.success) {
+        setNodes(prev => prev.map(n => n.id === nodeId ? { ...n, content: result.text } : n));
+        showMessage(`AI ${actionType} 完成！`, "success");
+      } else {
+        showMessage(result.error || "生成失败", "error");
+      }
+    } catch (err) {
+      showMessage(`请求失败：${err.message}`, "error");
+    }
   };
 
   let drawingPath = null;
@@ -638,14 +696,26 @@ export default function App() {
                             <div className="mt-auto pt-4 border-t border-gray-100 bg-white" onMouseDown={(e) => e.stopPropagation()}>
                               <span className="text-[11px] font-bold text-gray-400 uppercase tracking-wider block mb-3">下一步 (NEXT STEPS)</span>
                               <div className="grid grid-cols-1 gap-2">
-                                 <button onClick={() => {
+                                 <button onClick={async () => {
                                      const startX = node.x + 560; const yOffsets = [-520, 0, 520]; const newNodesToCreate = [];
                                      const centerYAlignOffset = getCenterY(node.type) - getCenterY('image');
                                      for (let i = 0; i < 3; i++) { newNodesToCreate.push({ id: `node-${Date.now()}-${i}`, type: 'image', title: `画面方案 0${i + 1}`, content: null, status: 'generating', x: startX, y: node.y + centerYAlignOffset + yOffsets[i], parentId: node.id }); }
-                                     setNodes(prev => [...prev, ...newNodesToCreate]); setDropMenu(null); showMessage(`已触发 AI 并发，正在生成 3 个不同视角/风格的画面方案...`, "info"); setCredits(prev => prev - 30);
-                                     const mockResults = [ { img: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1000', prompt: '方案 A' }, { img: 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?q=80&w=1000', prompt: '方案 B' }, { img: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?q=80&w=1000', prompt: '方案 C' } ];
-                                     newNodesToCreate.forEach((n, index) => { setTimeout(() => { setNodes(currentNodes => currentNodes.map(cn => cn.id === n.id ? { ...cn, status: 'completed', content: mockResults[index].img, prompt: `[${selectedStyle}] ${mockResults[index].prompt}` } : cn)); }, 2000 + (index * 800)); });
-                                   }} className="flex items-center justify-center space-x-2 bg-[#1A1A24] text-white text-[13px] py-3.5 rounded-xl hover:bg-black transition-colors shadow-md font-bold w-full"><ImageIcon size={16}/> <span>并发生成 3 张平行画面</span>
+                                     setNodes(prev => [...prev, ...newNodesToCreate]); setDropMenu(null); showMessage(`已触发 AI 并发，正在生成 3 个不同视角的画面方案...`, "info"); setCredits(prev => prev - 30);
+                                     // 为每个节点并发调用 Nano Banana
+                                     const angles = ['正面广角镜头', '侧面45度特写', '俯视氛围远景'];
+                                     newNodesToCreate.forEach(async (n, index) => {
+                                       try {
+                                         const result = await callWorker('image', { prompt: `[${selectedStyle}] ${angles[index]}，${node.content || ''}` });
+                                         if (result.success) {
+                                           setNodes(currentNodes => currentNodes.map(cn => cn.id === n.id ? { ...cn, status: 'completed', content: result.image, prompt: `[${selectedStyle}] ${angles[index]}` } : cn));
+                                         } else {
+                                           setNodes(currentNodes => currentNodes.map(cn => cn.id === n.id ? { ...cn, status: 'empty' } : cn));
+                                         }
+                                       } catch (err) {
+                                         setNodes(currentNodes => currentNodes.map(cn => cn.id === n.id ? { ...cn, status: 'empty' } : cn));
+                                       }
+                                     });
+                                   }} className="flex items-center justify-center space-x-2 bg-[#1A1A24] text-white text-[13px] py-3.5 rounded-xl hover:bg-black transition-colors shadow-md font-bold w-full"><ImageIcon size={16}/> <span>并发生成 3 张 AI 画面</span>
                                  </button>
                               </div>
                             </div>
