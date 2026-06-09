@@ -3,6 +3,5 @@ import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 
 export default defineConfig({
-  base: '/ai-media-vedio/',
   plugins: [react(), tailwindcss()],
 })

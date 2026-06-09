@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
-import {
-  AlignLeft, Image as ImageIcon, Activity, Upload,
+import { 
+  AlignLeft, Image as ImageIcon, Activity, Upload, 
   Settings, MessageSquare, Home, Star, Sparkles,
   Mic, ArrowUp, Plus, X, Bold, Italic, List, Maximize2, Minimize2,
   Play, Download, CheckCircle2, Users, User, UserPlus, Mail,
@@ -9,9 +9,7 @@ import {
   Command, RefreshCw, Sun, Hexagon, Copy, MousePointer, ArrowRight,
   PlusCircle, BoxSelect, History, PlaySquare, AudioWaveform, Key,
   Monitor, BarChart2, Eraser, FlipHorizontal, LayoutGrid, ListTree, FileOutput,
-  DownloadCloud, UserCircle, Search, Heart, Clock, Filter, Tag, MoreVertical,
-  Trash2, Grid3X3, Music, Film, Layers, LogOut, HelpCircle, CreditCard, Shield,
-  Receipt, Coins, ChevronRight, Bell, Palette, Globe
+  DownloadCloud, UserCircle
 } from 'lucide-react';
 
 // --- 悬浮工具栏组件 ---
@@ -87,21 +85,6 @@ const renderApiIcon = (apiName) => {
   return <span className="mr-1.5">✨</span>; 
 };
 
-const MOCK_ASSETS = [
-  { id: 'a1', title: '侦探_K', type: 'role', subtype: 'IP-Adapter 模型', thumbnail: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?q=80&w=400', date: '2天前', size: '234 MB', favorite: false },
-  { id: 'a2', title: '全息投影_动态特效', type: 'video', subtype: '视频流资产', thumbnail: 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?q=80&w=400', date: '10分钟前', duration: '2.0s', favorite: false },
-  { id: 'a3', title: '废弃基地_广角全景', type: 'scene', subtype: '关键帧分镜', thumbnail: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=400', date: '1小时前', size: '5.2 MB', favorite: false },
-  { id: 'a4', title: '艾拉_AI全息投影', type: 'role', subtype: 'Lora 微调模型', thumbnail: 'https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?q=80&w=400', date: '3小时前', size: '156 MB', favorite: false },
-  { id: 'a5', title: '火星地表_沙尘暴', type: 'scene', subtype: 'HDRI 环境贴图', thumbnail: 'https://images.unsplash.com/photo-1614728263952-84ea256f9679?q=80&w=400', date: '昨天', size: '48 MB', favorite: false },
-  { id: 'a6', title: '背景氛围_低频嗡鸣', type: 'audio', subtype: '环境音效', thumbnail: '', date: '30分钟前', duration: '15.0s', favorite: false },
-  { id: 'a7', title: '赛博朋克_霓虹街景', type: 'scene', subtype: '参考画集', thumbnail: 'https://images.unsplash.com/photo-1563089145-599997674d42?q=80&w=400', date: '2天前', size: '12.8 MB', favorite: false },
-  { id: 'a8', title: '脚步声_金属回响', type: 'audio', subtype: 'Foley 拟音', thumbnail: '', date: '1天前', duration: '4.5s', favorite: false },
-  { id: 'a9', title: '义眼_战损版特写', type: 'role', subtype: 'IP-Adapter 模型', thumbnail: 'https://images.unsplash.com/photo-1620121692029-d088224ddc74?q=80&w=400', date: '5小时前', size: '89 MB', favorite: false },
-  { id: 'a10', title: '控制室_灯光闪烁', type: 'video', subtype: '视频流资产', thumbnail: 'https://images.unsplash.com/photo-1515634928627-2a4e0dae3ddf?q=80&w=400', date: '昨天', duration: '3.2s', favorite: false },
-  { id: 'a11', title: '太空服_高精度贴图', type: 'role', subtype: 'Checkpoint 模型', thumbnail: 'https://images.unsplash.com/photo-1614726363420-ad38a0c9f2e3?q=80&w=400', date: '3天前', size: '320 MB', favorite: false },
-  { id: 'a12', title: '开场_推镜至近景', type: 'scene', subtype: '故事板序列', thumbnail: 'https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?q=80&w=400', date: '4小时前', size: '6.1 MB', favorite: false },
-];
-
 // ==========================================
 // 主应用组件
 // ==========================================
@@ -128,10 +111,7 @@ export default function App() {
   const [activeSidebar, setActiveSidebar] = useState('nodes');
   const [assetTab, setAssetTab] = useState('all');
   const [historyTab, setHistoryTab] = useState('all');
-  const [isAssetExpanded, setIsAssetExpanded] = useState(false);
-  const [assetSearchQuery, setAssetSearchQuery] = useState('');
-  const [favoritedAssets, setFavoritedAssets] = useState(new Set());
-  const [assetSortBy, setAssetSortBy] = useState('latest');
+  const [isAssetExpanded, setIsAssetExpanded] = useState(false); 
 
   const [batchSize, setBatchSize] = useState(1);
   const [aspectRatio, setAspectRatio] = useState('16:9');
@@ -142,21 +122,16 @@ export default function App() {
   const [splashState, setSplashState] = useState('entering'); 
   const [isTeamModalOpen, setIsTeamModalOpen] = useState(false);
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
-  const [profileTab, setProfileTab] = useState('overview');
   const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
   const [settingsTab, setSettingsTab] = useState('general');
   const [isApprovalFlowOn, setIsApprovalFlowOn] = useState(true);
 
-  // 品牌与视觉风格智控状态
   const [isBrandStyleModalOpen, setIsBrandStyleModalOpen] = useState(false);
   const [brandScenario, setBrandScenario] = useState('高端产品广告');
-  const [brandLighting, setBrandLighting] = useState('电影级柔光');
-  const [brandColor, setBrandColor] = useState('高级灰/低饱和');
-  const [brandLens, setBrandLens] = useState('35mm 人文视角');
-  const [motionIntensity, setMotionIntensity] = useState('微动 (氛围感)');
+  const [brandStrength, setBrandStrength] = useState(80);
+  const [brandStability, setBrandStability] = useState(70);
+  const [brandPreserve, setBrandPreserve] = useState(90);
   const [analyzingTags, setAnalyzingTags] = useState(false);
-  const [uploadedBrandAssets, setUploadedBrandAssets] = useState([]); // 新增：已上传品牌资产状态
-  const [brandStyleName, setBrandStyleName] = useState('未命名视觉预设'); // 新增：品牌预设名称
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -182,15 +157,13 @@ export default function App() {
 
   const getScenarioTags = (scenario) => {
     const map = {
-      'TVC 广告': ['广告级打光', '极简构图', '色彩明亮', '顺滑运镜'],
-      '电影预告片': ['史诗感', '高动态范围', '宽银幕 2.35:1', '戏剧冲突'],
-      '电商主图视频': ['核心高亮', '快节奏', '视觉中心', '材质细节'],
-      '短剧场景': ['剧情导向', '特写镜头', '情感共鸣', '通俗光影'],
+      'TVC 广告': ['广告级打光', '电影感', '色彩饱和', '高级动态'],
+      '电商短视频': ['极简商业', '高亮主图', '快节奏', '视觉中心'],
       '小红书种草': ['日系柔光', '氛围感', '生活化', '微颗粒感'],
       '高端产品广告': ['Apple 风', '高级灰', '极简构图', '慢镜头'],
-      '国风美学': ['东方美学', '水墨留白', '低饱和度', '对称构图'],
-      '动漫/二次元': ['赛璐璐', '新海诚风', '高饱和', '平涂光影'],
-      '赛博科幻': ['赛博霓虹', '高对比度', '冷色温', '几何切割']
+      '国风': ['东方美学', '水墨留白', '低饱和度', '对称构图'],
+      '日系': ['胶片质感', '青蓝冷调', '自然光影', '生活呼吸感'],
+      '科技感': ['赛博霓虹', '高对比度', '冷色温', '几何切割']
     };
     return map[scenario] || ['智能适配', '高质量解析'];
   };
@@ -200,16 +173,14 @@ export default function App() {
   const startPanRef = useRef({ x: 0, y: 0 });
   const [isPanning, setIsPanning] = useState(false);
   const isPanningRef = useRef(false);
-  const [zoom, setZoom] = useState(1);
-  const zoomRef = useRef(1);
   const [draggingNodeId, setDraggingNodeId] = useState(null); 
   const draggingNodeRef = useRef(null);
   const startNodePosRef = useRef({ startX: 0, startY: 0, nodeX: 0, nodeY: 0 });
 
   const [nodes, setNodes] = useState([
     { id: 'node-1', type: 'text', title: '脚本设定', content: '在一个废弃的火星基地上，一名孤独的侦探正在检查闪烁的全息投影，镜头缓慢推近...', status: 'idle', x: 100, y: 100, parentId: null },
-    { id: 'node-2', type: 'image', title: '视觉参考', content: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1000&auto=format&fit=crop', prompt: '[写实摄影] 孤独侦探背影', status: 'completed', x: 660, y: 130, parentId: 'node-1' },
-    { id: 'node-3', type: 'video', title: '受控视频流', content: 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?q=80&w=1000', prompt: '缓慢推镜头，光影闪烁', status: 'completed', x: 1220, y: 130, parentId: 'node-2' }
+    { id: 'node-2', type: 'image', title: '视觉参考', content: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1000&auto=format&fit=crop', prompt: '[写实摄影] 孤独侦探背影', status: 'completed', x: 660, y: 100, parentId: 'node-1' },
+    { id: 'node-3', type: 'video', title: '受控视频流', content: 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?q=80&w=1000', prompt: '缓慢推镜头，光影闪烁', status: 'completed', x: 1220, y: 100, parentId: 'node-2' }
   ]);
   const nodesRef = useRef(nodes); 
   useEffect(() => { nodesRef.current = nodes; }, [nodes]);
@@ -230,14 +201,14 @@ export default function App() {
         setPan({ x: newX, y: newY });
         panRef.current = { x: newX, y: newY };
       } else if (draggingNodeRef.current) {
-        const dx = (e.clientX - startNodePosRef.current.startX) / zoomRef.current;
-        const dy = (e.clientY - startNodePosRef.current.startY) / zoomRef.current;
+        const dx = e.clientX - startNodePosRef.current.startX;
+        const dy = e.clientY - startNodePosRef.current.startY;
         setNodes(prev => prev.map(n => n.id === draggingNodeRef.current ? { ...n, x: startNodePosRef.current.nodeX + dx, y: startNodePosRef.current.nodeY + dy } : n));
       } else if (drawingLinkRef.current) {
         drawingLinkRef.current = {
           ...drawingLinkRef.current,
-          endX: (e.clientX - panRef.current.x) / zoomRef.current,
-          endY: (e.clientY - panRef.current.y) / zoomRef.current
+          endX: e.clientX - panRef.current.x,
+          endY: e.clientY - panRef.current.y
         };
         setDrawingLink({ ...drawingLinkRef.current });
       }
@@ -270,29 +241,6 @@ export default function App() {
     };
   }, [viewMode, nodes]);
 
-  // Alt + 滚轮缩放
-  useEffect(() => {
-    const handleWheel = (e) => {
-      if (e.altKey) {
-        e.preventDefault();
-        const delta = e.deltaY > 0 ? 0.92 : 1.08;
-        const newZoom = Math.max(0.1, Math.min(5, zoomRef.current * delta));
-        const mouseX = e.clientX;
-        const mouseY = e.clientY;
-        // 以鼠标位置为中心缩放
-        panRef.current = {
-          x: mouseX - (mouseX - panRef.current.x) * (newZoom / zoomRef.current),
-          y: mouseY - (mouseY - panRef.current.y) * (newZoom / zoomRef.current),
-        };
-        zoomRef.current = newZoom;
-        setPan({ ...panRef.current });
-        setZoom(newZoom);
-      }
-    };
-    window.addEventListener('wheel', handleWheel, { passive: false });
-    return () => window.removeEventListener('wheel', handleWheel);
-  }, []);
-
   const showMessage = (message, type = 'info') => {
     setToast({ show: true, message, type });
     setTimeout(() => setToast(prev => ({ ...prev, show: false })), 3000);
@@ -322,7 +270,7 @@ export default function App() {
     startNodePosRef.current = { startX: e.clientX, startY: e.clientY, nodeX: node.x, nodeY: node.y };
   };
 
-  const resetView = () => { setPan({ x: 0, y: 0 }); panRef.current = { x: 0, y: 0 }; setZoom(1); zoomRef.current = 1; showMessage("视角已重置回原点 (100%)"); };
+  const resetView = () => { setPan({ x: 0, y: 0 }); panRef.current = { x: 0, y: 0 }; showMessage("视角已重置回原点"); };
 
   const handleAutoGroup = () => {
     if (nodes.length === 0) return;
@@ -338,18 +286,8 @@ export default function App() {
   const handleAddNode = (sourceNodeId, type, targetX, targetY) => {
     const newNodeId = `node-${Date.now()}`;
     let title = type === 'text' ? '文本' : type === 'image' ? '图像' : type === 'video' ? '视频流' : '音效配乐';
-    
-    let newX = 150 - pan.x;
-    let newY = (nodes.length > 0 ? Math.max(...nodes.map(n => n.y)) : 100) + 520;
-
-    if (sourceNodeId) {
-      const sourceNode = nodes.find(n => n.id === sourceNodeId);
-      if (sourceNode) {
-        newX = targetX ?? (sourceNode.x + 560);
-        const desiredCenterY = targetY ?? (sourceNode.y + getCenterY(sourceNode.type));
-        newY = desiredCenterY - getCenterY(type);
-      }
-    }
+    let newX = sourceNodeId ? (targetX ?? nodes.find(n => n.id === sourceNodeId)?.x + 560) : 150 - pan.x;
+    let newY = sourceNodeId ? (targetY ?? nodes.find(n => n.id === sourceNodeId)?.y) - (targetY ? getCenterY(type) : 0) : (nodes.length > 0 ? Math.max(...nodes.map(n => n.y)) : 100) + 520;
     
     setNodes([...nodes, { id: newNodeId, type, title, content: null, status: 'empty', x: newX, y: newY, parentId: sourceNodeId || null }]);
     setActiveNode(newNodeId);
@@ -413,10 +351,10 @@ export default function App() {
   if (drawingLink) {
     const sourceNode = nodes.find(n => n.id === drawingLink.sourceNodeId);
     if (sourceNode) {
-      const startX = sourceNode.x + 480;
-      const startY = sourceNode.y + getCenterY(sourceNode.type);
-      const endX = drawingLink.endX;
-      const endY = drawingLink.endY;
+      const startX = sourceNode.x + pan.x + 480; 
+      const startY = sourceNode.y + pan.y + getCenterY(sourceNode.type);
+      const endX = drawingLink.endX + pan.x;
+      const endY = drawingLink.endY + pan.y;
       const controlPointX = startX + (endX - startX) / 2;
       drawingPath = `M ${startX} ${startY} C ${controlPointX} ${startY}, ${controlPointX} ${endY}, ${endX} ${endY}`;
     }
@@ -472,7 +410,7 @@ export default function App() {
   }, [nodes]);
 
   // ========================================================
-  // DOM 渲染区域
+  // DOM 渲染区域 (绝对扁平化防遮挡重构版)
   // ========================================================
   return (
     <div className="fixed inset-0 bg-[#F8F9FA] text-gray-900 font-sans overflow-hidden selection:bg-indigo-500/20">
@@ -529,32 +467,28 @@ export default function App() {
         {/* === 视图 A: 无限画布 === */}
         {viewMode === 'canvas' && (
           <React.Fragment>
-            {/* 画布背景点阵 */}
-            <div className="absolute inset-0 dot-pattern pointer-events-none" style={{ backgroundPosition: `${pan.x}px ${pan.y}px` }} />
             {/* 画布底板交互区 */}
-            <div id="canvas-bg" onMouseDown={handleCanvasMouseDown} className={`absolute inset-0 ${isPanning ? 'cursor-grabbing' : 'cursor-grab'}`}>
-              {/* 缩放 + 平移容器 */}
-              <div style={{ transform: `translate(${pan.x}px, ${pan.y}px) scale(${zoom})`, transformOrigin: '0 0' }}>
+            <div id="canvas-bg" onMouseDown={handleCanvasMouseDown} className={`absolute inset-0 w-full h-full dot-pattern pointer-events-auto ${isPanning ? 'cursor-grabbing' : 'cursor-grab'}`} style={{ backgroundPosition: `${pan.x}px ${pan.y}px` }}>
               
               {/* 框选边框 */}
               <div className="absolute inset-0 pointer-events-none">
                 {frames.map((frame) => (
-                  <div key={frame.id} className="absolute border-2 border-dashed border-indigo-400/50 bg-indigo-50/20 transition-all duration-300 rounded-[2.5rem]" style={{ left: frame.x, top: frame.y, width: frame.width, height: frame.height, boxShadow: 'inset 0 0 50px rgba(99, 102, 241, 0.05)' }}>
+                  <div key={frame.id} className="absolute border-2 border-dashed border-indigo-400/50 bg-indigo-50/20 transition-all duration-300 rounded-[2.5rem]" style={{ left: frame.x + pan.x, top: frame.y + pan.y, width: frame.width, height: frame.height, boxShadow: 'inset 0 0 50px rgba(99, 102, 241, 0.05)' }}>
                     <div className="absolute -top-4 left-8 bg-white border border-indigo-200 text-indigo-700 px-4 py-1.5 rounded-full text-xs font-bold shadow-sm flex items-center"><BoxSelect size={14} className="mr-1.5 opacity-70"/>{frame.title}</div>
                   </div>
                 ))}
               </div>
 
               {/* 连线 SVG */}
-              <svg className="absolute pointer-events-none overflow-visible" style={{ left: -10000, top: -10000, width: 20000, height: 20000 }}>
+              <svg className="absolute inset-0 w-full h-full pointer-events-none overflow-visible">
                 {nodes.map((node) => {
-                  if (!node.parentId) return null;
+                  if (!node.parentId) return null; 
                   const prevNode = nodes.find(n => n.id === node.parentId);
                   if (!prevNode) return null;
-                  const startX = prevNode.x + 480;
-                  const startY = prevNode.y + getCenterY(prevNode.type);
-                  const endX = node.x;
-                  const endY = node.y + getCenterY(node.type);
+                  const startX = prevNode.x + pan.x + 480; 
+                  const startY = prevNode.y + pan.y + getCenterY(prevNode.type); 
+                  const endX = node.x + pan.x;
+                  const endY = node.y + pan.y + getCenterY(node.type); 
                   const controlPointX = startX + (endX - startX) / 2;
                   const path = `M ${startX} ${startY} C ${controlPointX} ${startY}, ${controlPointX} ${endY}, ${endX} ${endY}`;
                   return (
@@ -568,7 +502,7 @@ export default function App() {
                 {drawingPath && (
                   <g>
                     <path d={drawingPath} stroke="#6366F1" strokeWidth="3" strokeDasharray="6,4" fill="none" className="animate-pulse" />
-                    <circle cx={drawingLink.endX} cy={drawingLink.endY} r="5" fill="#6366F1" stroke="#fff" strokeWidth="2" />
+                    <circle cx={drawingLink.endX + pan.x} cy={drawingLink.endY + pan.y} r="5" fill="#6366F1" stroke="#fff" strokeWidth="2" />
                   </g>
                 )}
               </svg>
@@ -593,7 +527,7 @@ export default function App() {
                     onMouseDown={(e) => handleNodeMouseDown(e, node.id)}
                     className={`absolute w-[480px] ${node.type === 'text' ? 'min-h-[540px]' : 'h-[480px]'} flex flex-col cursor-move group/pipeline rounded-[1.5rem] pointer-events-auto ${isActive ? 'border-2 border-gray-900 bg-white' : 'border border-gray-200 bg-white/90 backdrop-blur hover:border-gray-300'}`}
                     style={{ 
-                      transform: `translate(${node.x}px, ${node.y}px) scale(${scale})`,
+                      transform: `translate(${node.x + pan.x}px, ${node.y + pan.y}px) scale(${scale})`,
                       transition: isDraggingThis ? 'none' : 'transform 0.2s cubic-bezier(0.2, 0, 0, 1), box-shadow 0.2s',
                       boxShadow: isDraggingThis ? '0 25px 50px -12px rgba(0, 0, 0, 0.25)' : isActive ? '0 12px 40px rgba(0,0,0,0.08)' : '0 4px 6px -1px rgba(0, 0, 0, 0.05)',
                       zIndex: isDraggingThis ? 80 : (isActive ? 70 : 50)
@@ -640,8 +574,7 @@ export default function App() {
                               <div className="grid grid-cols-1 gap-2">
                                  <button onClick={() => {
                                      const startX = node.x + 560; const yOffsets = [-520, 0, 520]; const newNodesToCreate = [];
-                                     const centerYAlignOffset = getCenterY(node.type) - getCenterY('image');
-                                     for (let i = 0; i < 3; i++) { newNodesToCreate.push({ id: `node-${Date.now()}-${i}`, type: 'image', title: `画面方案 0${i + 1}`, content: null, status: 'generating', x: startX, y: node.y + centerYAlignOffset + yOffsets[i], parentId: node.id }); }
+                                     for (let i = 0; i < 3; i++) { newNodesToCreate.push({ id: `node-${Date.now()}-${i}`, type: 'image', title: `画面方案 0${i + 1}`, content: null, status: 'generating', x: startX, y: node.y + yOffsets[i], parentId: node.id }); }
                                      setNodes(prev => [...prev, ...newNodesToCreate]); setDropMenu(null); showMessage(`已触发 AI 并发，正在生成 3 个不同视角/风格的画面方案...`, "info"); setCredits(prev => prev - 30);
                                      const mockResults = [ { img: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1000', prompt: '方案 A' }, { img: 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?q=80&w=1000', prompt: '方案 B' }, { img: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?q=80&w=1000', prompt: '方案 C' } ];
                                      newNodesToCreate.forEach((n, index) => { setTimeout(() => { setNodes(currentNodes => currentNodes.map(cn => cn.id === n.id ? { ...cn, status: 'completed', content: mockResults[index].img, prompt: `[${selectedStyle}] ${mockResults[index].prompt}` } : cn)); }, 2000 + (index * 800)); });
@@ -700,47 +633,12 @@ export default function App() {
                         
                         {node.type === 'video' && (
                           <div className="flex items-center mb-3">
-                            <div className="flex items-center bg-gray-50 border border-gray-200/80 rounded-xl p-1.5 shadow-sm">
-                              <button
-                                onClick={() => showMessage("焦点已锁定，请点击画面中的目标区域", "info")}
-                                className="flex flex-col items-center justify-center w-[68px] h-[68px] rounded-xl bg-white border border-gray-200 shadow-sm hover:border-amber-400 hover:bg-amber-50/50 transition-all group cursor-pointer"
-                                title="焦点选择"
-                              >
-                                <div className="w-9 h-9 rounded-lg bg-gray-100 group-hover:bg-amber-100 flex items-center justify-center mb-1 transition-colors">
-                                  <MousePointer size={18} className="text-gray-400 group-hover:text-amber-500 transition-colors" strokeWidth={1.5} />
-                                </div>
-                                <span className="text-[10px] font-bold text-gray-400 group-hover:text-amber-600 transition-colors">焦点</span>
-                              </button>
-                              <div className="w-px h-8 bg-gray-200 mx-2"></div>
-                              <button
-                                onClick={() => showMessage("请在画布中点击选择首帧画面", "info")}
-                                className="flex flex-col items-center justify-center w-[68px] h-[68px] rounded-xl bg-white border border-gray-200 shadow-sm hover:border-indigo-400 hover:bg-indigo-50/50 transition-all group cursor-pointer"
-                                title="选择首帧"
-                              >
-                                <div className="w-9 h-9 rounded-lg bg-gray-100 group-hover:bg-indigo-100 flex items-center justify-center mb-1 transition-colors">
-                                  <ImageIcon size={18} className="text-gray-400 group-hover:text-indigo-500 transition-colors" strokeWidth={1.5} />
-                                </div>
-                                <span className="text-[10px] font-bold text-gray-400 group-hover:text-indigo-600 transition-colors">首帧</span>
-                              </button>
-                              <ArrowRight size={16} className="text-gray-400 mx-2 shrink-0" strokeWidth={1.5} />
-                              <button
-                                onClick={() => showMessage("请在画布中点击选择尾帧画面", "info")}
-                                className="flex flex-col items-center justify-center w-[68px] h-[68px] rounded-xl bg-white border border-gray-200 shadow-sm hover:border-indigo-400 hover:bg-indigo-50/50 transition-all group cursor-pointer"
-                                title="选择尾帧"
-                              >
-                                <div className="w-9 h-9 rounded-lg bg-gray-100 group-hover:bg-indigo-100 flex items-center justify-center mb-1 transition-colors">
-                                  <ImageIcon size={18} className="text-gray-400 group-hover:text-indigo-500 transition-colors" strokeWidth={1.5} />
-                                </div>
-                                <span className="text-[10px] font-bold text-gray-400 group-hover:text-indigo-600 transition-colors">尾帧</span>
-                              </button>
-                              <div className="w-px h-8 bg-gray-200 mx-2"></div>
-                              <button
-                                onClick={() => showMessage("已触发首尾帧插值生成，正在渲染中间过渡...", "success")}
-                                className="flex items-center space-x-1.5 px-4 py-2.5 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 transition-colors shadow-sm group"
-                              >
-                                <Sparkles size={14} className="group-hover:scale-110 transition-transform" />
-                                <span className="text-[11px] font-bold">生成补间</span>
-                              </button>
+                            <div className="flex items-center bg-gray-50 border border-gray-200/80 rounded-xl p-1 shadow-sm">
+                              <button className="w-8 h-8 flex items-center justify-center bg-white border border-gray-200 shadow-sm rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"><MousePointer size={16} strokeWidth={1.5} /></button>
+                              <div className="w-px h-4 bg-gray-300 mx-1.5"></div>
+                              <button className="w-8 h-8 flex items-center justify-center rounded-lg text-gray-600 hover:bg-gray-200 transition-colors bg-transparent"><Plus size={18} strokeWidth={2} /></button>
+                              <ArrowRight size={14} className="text-gray-400 mx-1" strokeWidth={1.5} />
+                              <button className="w-8 h-8 flex items-center justify-center rounded-lg text-gray-600 hover:bg-gray-200 transition-colors bg-transparent"><Plus size={18} strokeWidth={2} /></button>
                             </div>
                           </div>
                         )}
@@ -784,8 +682,6 @@ export default function App() {
                                   ) : (
                                     <React.Fragment>
                                       <div onClick={() => { setTextApiModel('Gemini 3.5 Flash'); setOpenModelDropdownId(null); }} className="px-4 py-2.5 text-[13px] font-bold cursor-pointer flex items-center hover:bg-gray-50"><span className="mr-2">✨</span> <span>Gemini 3.5 Flash</span></div>
-                                      <div onClick={() => { setTextApiModel('Gemini 3.5 Flash-Lite'); setOpenModelDropdownId(null); }} className="px-4 py-2.5 text-[13px] font-bold cursor-pointer flex items-center hover:bg-gray-50"><span className="mr-2">✨</span> <span>Gemini 3.5 Flash-Lite</span></div>
-                                      <div onClick={() => { setTextApiModel('Gemini 3.1 Pro'); setOpenModelDropdownId(null); }} className="px-4 py-2.5 text-[13px] font-bold cursor-pointer flex items-center hover:bg-gray-50"><span className="mr-2">✨</span> <span>Gemini 3.1 Pro</span></div>
                                     </React.Fragment>
                                   )}
                                 </div>
@@ -883,14 +779,13 @@ export default function App() {
               
               {/* 画布内放置节点的浮动菜单 */}
               {dropMenu && (
-                <div onMouseDown={(e) => e.stopPropagation()} className="absolute bg-white border border-gray-200/80 shadow-2xl rounded-xl p-1.5 flex flex-col animate-fade-in backdrop-blur-xl pointer-events-auto z-[200]" style={{ left: dropMenu.x + 20, top: dropMenu.y - 60, width: '140px' }}>
+                <div onMouseDown={(e) => e.stopPropagation()} className="absolute bg-white border border-gray-200/80 shadow-2xl rounded-xl p-1.5 flex flex-col animate-fade-in backdrop-blur-xl pointer-events-auto z-[200]" style={{ left: dropMenu.x + pan.x + 20, top: dropMenu.y + pan.y - 60, width: '140px' }}>
                   <div className="px-2 py-1.5 border-b border-gray-100 mb-1"><span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">放置后续节点</span></div>
                   <button onClick={() => { handleAddNode(dropMenu.sourceNodeId, 'image', dropMenu.x, dropMenu.y); setDropMenu(null); }} className="flex items-center p-2 hover:bg-gray-50 rounded-lg text-left group transition-colors"><ImageIcon size={14} className="text-gray-400 group-hover:text-indigo-600 mr-2" /> <span className="text-[12px] font-bold text-gray-700 group-hover:text-gray-900">生成图像</span></button>
                   <button onClick={() => { handleAddNode(dropMenu.sourceNodeId, 'video', dropMenu.x, dropMenu.y); setDropMenu(null); }} className="flex items-center p-2 hover:bg-gray-50 rounded-lg text-left group transition-colors"><PlaySquare size={14} className="text-gray-400 group-hover:text-indigo-600 mr-2" /> <span className="text-[12px] font-bold text-gray-700 group-hover:text-gray-900">受控视频流</span></button>
                   <button onClick={() => { handleAddNode(dropMenu.sourceNodeId, 'audio', dropMenu.x, dropMenu.y); setDropMenu(null); }} className="flex items-center p-2 hover:bg-gray-50 rounded-lg text-left group transition-colors"><AudioWaveform size={14} className="text-gray-400 group-hover:text-indigo-600 mr-2" /> <span className="text-[12px] font-bold text-gray-700 group-hover:text-gray-900">音效配乐</span></button>
                 </div>
               )}
-              </div>
             </div>
             
             {/* 左侧悬浮面板 (UI 层) */}
@@ -926,209 +821,45 @@ export default function App() {
                 </div>
               )}
               
-              {/* 扩展面板: 资产库 (重构版) */}
-              {activeSidebar === 'assets' && (() => {
-                const CATEGORIES = [
-                  { key: 'all', label: '全部', icon: Grid3X3 },
-                  { key: 'role', label: '角色', icon: UserCircle },
-                  { key: 'scene', label: '分镜', icon: ImageIcon },
-                  { key: 'video', label: '视频', icon: PlaySquare },
-                  { key: 'audio', label: '音频', icon: Music },
-                ];
-
-                const typeBadge = (type) => {
-                  const cfg = {
-                    role: 'bg-purple-50 text-purple-600 border-purple-100',
-                    scene: 'bg-cyan-50 text-cyan-600 border-cyan-100',
-                    video: 'bg-amber-50 text-amber-600 border-amber-100',
-                    audio: 'bg-green-50 text-green-600 border-green-100',
-                  };
-                  const label = { role: '角色', scene: '分镜', video: '视频', audio: '音频' };
-                  return (
-                    <span className={`text-[9px] px-1.5 py-0.5 rounded-md font-bold border ${cfg[type] || cfg.role}`}>
-                      {label[type] || type}
-                    </span>
-                  );
-                };
-
-                const filtered = MOCK_ASSETS.filter(a => {
-                  if (assetTab !== 'all' && a.type !== assetTab) return false;
-                  if (assetSearchQuery && !a.title.toLowerCase().includes(assetSearchQuery.toLowerCase()) && !a.subtype.toLowerCase().includes(assetSearchQuery.toLowerCase())) return false;
-                  return true;
-                });
-
-                const sorted = [...filtered].sort((a, b) => {
-                  if (favoritedAssets.has(a.id) !== favoritedAssets.has(b.id)) return favoritedAssets.has(b.id) ? 1 : -1;
-                  return assetSortBy === 'latest' ? 0 : a.title.localeCompare(b.title);
-                });
-
-                return (
-                <div className={`bg-white border border-gray-200/80 rounded-[28px] shadow-2xl flex flex-col pointer-events-auto backdrop-blur-xl transition-all duration-500 ease-in-out overflow-hidden ${isAssetExpanded ? 'fixed left-[4%] top-[8%] w-[92%] h-[84%] z-[2000]' : 'w-[340px] h-[620px] relative animate-fade-in'}`}>
-                  {/* Header */}
-                  <div className={`${isAssetExpanded ? 'px-8 py-5' : 'px-5 py-4'} border-b border-gray-100 flex justify-between items-center bg-gray-50/50 shrink-0`}>
-                    <div className="flex items-center space-x-2.5">
-                      <span className="text-[15px] font-bold text-gray-800 tracking-wider">资产库</span>
-                      <span className="text-[11px] font-bold text-gray-400 bg-gray-200/60 px-2 py-0.5 rounded-full">{MOCK_ASSETS.length}</span>
-                    </div>
+              {/* 扩展面板: 资产库 */}
+              {activeSidebar === 'assets' && (
+                <div className={`bg-white border border-gray-200/80 rounded-[28px] shadow-2xl flex flex-col pointer-events-auto backdrop-blur-xl transition-all duration-500 ease-in-out overflow-hidden ${isAssetExpanded ? 'fixed left-[4%] top-[8%] w-[92%] h-[84%] z-[2000]' : 'w-[300px] h-[520px] relative animate-fade-in'}`}>
+                  <div className="px-4 py-4 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
+                    <div className="flex items-center space-x-2"><span className="text-[15px] font-bold text-gray-800 tracking-wider">资产库 (Assets)</span></div>
                     <div className="flex items-center space-x-2">
-                      <button
-                        onClick={() => {
-                          const uploadInput = document.createElement('input');
-                          uploadInput.type = 'file'; uploadInput.multiple = true; uploadInput.accept = 'image/*,video/*,audio/*';
-                          uploadInput.onchange = () => showMessage(`已选择 ${uploadInput.files.length} 个文件，开始上传...`, "success");
-                          uploadInput.click();
-                        }}
-                        className="text-[11px] font-bold text-indigo-600 bg-indigo-50 hover:bg-indigo-100 border border-indigo-100 px-3 py-1.5 rounded-lg transition-colors flex items-center space-x-1"
-                      >
-                        <Upload size={12} /><span>上传</span>
-                      </button>
                       <button onClick={() => setIsAssetExpanded(!isAssetExpanded)} className="text-gray-400 hover:text-indigo-600 bg-white border border-gray-200 rounded-lg p-1.5 shadow-sm">
                         {isAssetExpanded ? <Minimize2 size={16}/> : <Maximize2 size={16}/>}
                       </button>
                       {isAssetExpanded && <button onClick={() => {setActiveSidebar(null); setIsAssetExpanded(false);}} className="text-gray-400 hover:text-red-500 border border-gray-200 bg-white p-1.5 rounded-lg ml-1"><X size={16}/></button>}
                     </div>
                   </div>
-
-                  {/* Search */}
-                  <div className={`${isAssetExpanded ? 'px-8 pt-4 pb-3' : 'px-4 pt-3 pb-2'} shrink-0`}>
-                    <div className="flex items-center bg-gray-50 border border-gray-200 rounded-xl px-3 py-2.5 focus-within:border-indigo-400 focus-within:bg-white focus-within:ring-2 focus-within:ring-indigo-100 transition-all">
-                      <Search size={14} className="text-gray-400 mr-2 shrink-0" />
-                      <input
-                        value={assetSearchQuery}
-                        onChange={(e) => setAssetSearchQuery(e.target.value)}
-                        placeholder="搜索资产名称或类型..."
-                        className="bg-transparent border-none outline-none text-[12px] w-full text-gray-700 font-medium placeholder:text-gray-400"
-                      />
-                      {assetSearchQuery && (
-                        <button onClick={() => setAssetSearchQuery('')} className="text-gray-400 hover:text-gray-600 shrink-0"><X size={13} strokeWidth={2.5}/></button>
+                  <div className={`p-3 border-b border-gray-100 flex items-center ${isAssetExpanded ? 'px-8 py-4 space-x-4' : 'space-x-1.5'}`}>
+                    <button onClick={() => setAssetTab('all')} className={`text-[11px] px-3 py-1.5 rounded-md font-bold ${assetTab === 'all' ? 'bg-gray-900 text-white shadow-md' : 'bg-gray-50 text-gray-500 hover:bg-gray-100 border border-gray-200/60'}`}>全部</button>
+                    <button onClick={() => setAssetTab('roles')} className={`text-[11px] px-3 py-1.5 rounded-md font-bold flex items-center ${assetTab === 'roles' ? 'bg-indigo-500 text-white shadow-sm' : 'bg-gray-50 text-gray-500 hover:bg-gray-100 border border-gray-200/60'}`}><UserCircle size={12} className="mr-1.5"/>角色</button>
+                    <button onClick={() => setAssetTab('scene')} className={`text-[11px] px-3 py-1.5 rounded-md font-bold ${assetTab === 'scene' ? 'bg-gray-900 text-white' : 'bg-gray-50 text-gray-500 hover:bg-gray-100 border border-gray-200/60'}`}>分镜</button>
+                    <button onClick={() => setAssetTab('video')} className={`text-[11px] px-3 py-1.5 rounded-md font-bold flex items-center ${assetTab === 'video' ? 'bg-gray-900 text-white' : 'bg-gray-50 text-gray-500 hover:bg-gray-100 border border-gray-200/60'}`}><PlaySquare size={12} className="mr-1.5"/>视频</button>
+                  </div>
+                  <div className={`flex-1 overflow-y-auto custom-scrollbar ${isAssetExpanded ? 'p-8' : 'p-3'}`}>
+                    <div className={`grid gap-4 ${isAssetExpanded ? 'grid-cols-4 md:grid-cols-5 lg:grid-cols-6' : 'grid-cols-1'}`}>
+                      {(assetTab === 'all' || assetTab === 'roles') && (
+                        <div className="group border border-gray-200 rounded-2xl p-3 hover:border-indigo-500 bg-white cursor-pointer relative overflow-hidden">
+                          <img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?q=80&w=200" alt="role" className="w-full h-32 object-cover rounded-xl mb-3 shadow-inner" />
+                          <h3 className="text-[13px] font-bold text-gray-800">侦探_K</h3><p className="text-[10px] text-gray-400 mt-1">IP-Adapter 模型</p>
+                        </div>
+                      )}
+                      {(assetTab === 'all' || assetTab === 'video') && (
+                        <div className="group border border-gray-200 rounded-2xl p-3 hover:border-indigo-500 bg-white cursor-pointer relative">
+                          <div className="relative mb-3">
+                            <img src="https://images.unsplash.com/photo-1536440136628-849c177e76a1?q=80&w=200" alt="video" className="w-full h-32 object-cover rounded-xl" />
+                            <div className="absolute inset-0 flex items-center justify-center pointer-events-none bg-black/10 rounded-xl"><div className="w-8 h-8 bg-white/90 backdrop-blur-md rounded-full flex items-center justify-center shadow-md border border-white"><Play size={14} className="text-gray-900 ml-0.5 fill-gray-900" /></div></div>
+                          </div>
+                          <h3 className="text-[13px] font-bold text-gray-800">全息投影_动态特效</h3><p className="text-[10px] text-gray-400 mt-1">视频流资产 · 2.0s</p>
+                        </div>
                       )}
                     </div>
                   </div>
-
-                  {/* Tabs */}
-                  <div className={`${isAssetExpanded ? 'px-8 py-2 space-x-3' : 'px-4 py-1 space-x-1'} border-b border-gray-100 flex items-center shrink-0 overflow-x-auto custom-scrollbar`}>
-                    {CATEGORIES.map(cat => {
-                      const count = cat.key === 'all' ? MOCK_ASSETS.length : MOCK_ASSETS.filter(a => a.type === cat.key).length;
-                      const Icon = cat.icon;
-                      return (
-                        <button
-                          key={cat.key}
-                          onClick={() => setAssetTab(cat.key)}
-                          className={`flex items-center text-[11px] px-3 py-1.5 rounded-lg font-bold whitespace-nowrap transition-all ${
-                            assetTab === cat.key
-                              ? 'bg-gray-900 text-white shadow-md'
-                              : 'bg-gray-50 text-gray-500 hover:bg-gray-100 border border-gray-200/60'
-                          }`}
-                        >
-                          <Icon size={11} className="mr-1.5" />{cat.label}
-                          <span className={`ml-1.5 text-[10px] px-1.5 py-0.5 rounded-full ${assetTab === cat.key ? 'bg-white/20 text-white' : 'bg-gray-200 text-gray-400'}`}>{count}</span>
-                        </button>
-                      );
-                    })}
-                  </div>
-
-                  {/* Sort bar (expanded only) */}
-                  {isAssetExpanded && (
-                    <div className="px-8 py-2 border-b border-gray-100 flex items-center justify-between shrink-0 bg-white">
-                      <span className="text-[11px] text-gray-400 font-medium">{sorted.length} 个资产</span>
-                      <div className="flex items-center space-x-2">
-                        <button onClick={() => setAssetSortBy(assetSortBy === 'latest' ? 'name' : 'latest')} className="text-[11px] font-bold text-gray-500 hover:text-gray-800 transition-colors flex items-center space-x-1">
-                          <ArrowUp size={11} className={`transition-transform ${assetSortBy === 'name' ? 'rotate-0' : 'rotate-180'}`} />
-                          <span>{assetSortBy === 'latest' ? '最新' : '名称'}</span>
-                        </button>
-                        <div className="w-px h-3 bg-gray-200"></div>
-                        <button className="text-[11px] font-bold text-gray-500 hover:text-gray-800 transition-colors flex items-center space-x-1">
-                          <Filter size={11} /><span>筛选</span>
-                        </button>
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Asset grid */}
-                  <div className={`flex-1 overflow-y-auto custom-scrollbar ${isAssetExpanded ? 'p-8' : 'p-3'}`}>
-                    {sorted.length === 0 ? (
-                      <div className="flex flex-col items-center justify-center h-full text-gray-400 space-y-3">
-                        <Layers size={32} className="opacity-30" />
-                        <p className="text-[12px] font-medium">{assetSearchQuery ? '未找到匹配资产' : '此分类暂无资产'}</p>
-                      </div>
-                    ) : (
-                      <div className={`grid gap-4 ${isAssetExpanded ? 'grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6' : 'grid-cols-1 gap-3'}`}>
-                        {sorted.map(asset => {
-                          const isFav = favoritedAssets.has(asset.id);
-                          const isVideo = asset.type === 'video';
-                          const isAudio = asset.type === 'audio';
-                          return (
-                            <div
-                              key={asset.id}
-                              className={`group border border-gray-200 rounded-2xl hover:border-indigo-400 hover:shadow-lg bg-white cursor-pointer overflow-hidden transition-all duration-200 ${isAssetExpanded ? 'flex flex-col' : 'flex items-center p-3 space-x-3'}`}
-                            >
-                              {/* Thumbnail */}
-                              <div className={`relative overflow-hidden bg-gray-100 ${isAssetExpanded ? 'aspect-video w-full' : 'w-14 h-14 rounded-xl shrink-0'}`}>
-                                {isAudio ? (
-                                  <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-green-50 to-emerald-100">
-                                    <Music size={isAssetExpanded ? 28 : 18} className="text-emerald-500" />
-                                    {isAssetExpanded && <span className="text-[10px] font-bold text-emerald-600 mt-1">{asset.duration}</span>}
-                                  </div>
-                                ) : (
-                                  <>
-                                    <img src={asset.thumbnail} alt={asset.title} className="w-full h-full object-cover" />
-                                    {isVideo && (
-                                      <div className="absolute inset-0 flex items-center justify-center pointer-events-none bg-black/20">
-                                        <div className="w-8 h-8 bg-white/90 backdrop-blur-md rounded-full flex items-center justify-center shadow-md">
-                                          <Play size={13} className="text-gray-900 ml-0.5 fill-gray-900" />
-                                        </div>
-                                      </div>
-                                    )}
-                                    {isAssetExpanded && asset.type === 'video' && (
-                                      <span className="absolute bottom-1.5 right-1.5 bg-black/60 text-white text-[9px] px-1.5 py-0.5 rounded font-bold backdrop-blur-sm">{asset.duration}</span>
-                                    )}
-                                  </>
-                                )}
-                                {/* Hover overlay */}
-                                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end justify-between p-2.5">
-                                  <button
-                                    onClick={(e) => { e.stopPropagation(); setFavoritedAssets(prev => { const s = new Set(prev); isFav ? s.delete(asset.id) : s.add(asset.id); return s; }); }}
-                                    className={`w-7 h-7 rounded-full flex items-center justify-center shadow-md transition-colors ${isFav ? 'bg-red-500 text-white' : 'bg-white/90 text-gray-500 hover:text-red-500'}`}
-                                  >
-                                    <Heart size={13} fill={isFav ? 'currentColor' : 'none'} strokeWidth={2.5} />
-                                  </button>
-                                  <div className="flex items-center space-x-1.5">
-                                    <button onClick={(e) => { e.stopPropagation(); showMessage(`正在下载 ${asset.title}...`, "success"); }} className="w-7 h-7 rounded-full bg-white/90 text-gray-600 hover:text-indigo-600 flex items-center justify-center shadow-md"><Download size={13} /></button>
-                                    <button onClick={(e) => { e.stopPropagation(); showMessage(`预览 ${asset.title}`, "info"); }} className="w-7 h-7 rounded-full bg-white/90 text-gray-600 hover:text-indigo-600 flex items-center justify-center shadow-md"><Maximize2 size={13} /></button>
-                                  </div>
-                                </div>
-                              </div>
-
-                              {/* Info */}
-                              <div className={isAssetExpanded ? 'p-3 flex-1' : 'flex-1 min-w-0'}>
-                                <div className="flex items-start justify-between mb-0.5">
-                                  <h3 className="text-[13px] font-bold text-gray-800 truncate leading-tight">{asset.title}</h3>
-                                  {!isAssetExpanded && isFav && <Heart size={11} fill="#EF4444" className="text-red-500 shrink-0 ml-1" />}
-                                </div>
-                                <p className="text-[10px] text-gray-400 mb-1.5">{asset.subtype}</p>
-                                {isAssetExpanded && (
-                                  <div className="flex items-center justify-between mt-auto">
-                                    {typeBadge(asset.type)}
-                                    <span className="text-[10px] text-gray-400 font-mono">{asset.date}</span>
-                                  </div>
-                                )}
-                                {!isAssetExpanded && (
-                                  <div className="flex items-center space-x-2">
-                                    {typeBadge(asset.type)}
-                                    <span className="text-[10px] text-gray-400 font-mono">{asset.duration || asset.size}</span>
-                                    <span className="text-[10px] text-gray-350">{asset.date}</span>
-                                  </div>
-                                )}
-                              </div>
-                            </div>
-                          );
-                        })}
-                      </div>
-                    )}
-                  </div>
                 </div>
-                );
-              })()}
+              )}
 
               {/* 扩展面板: 生成历史 */}
               {activeSidebar === 'history' && (
@@ -1151,7 +882,6 @@ export default function App() {
                   </div>
                 </div>
               )}
-
             </div>
 
             {/* 左下角视口控制 */}
@@ -1159,13 +889,6 @@ export default function App() {
               <button onClick={handleAutoGroup} className="flex items-center space-x-1.5 px-3 py-1.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-600 rounded-full transition-colors font-bold text-xs"><BoxSelect size={14} strokeWidth={2} /><span>框选编组</span></button>
               <div className="w-px h-4 bg-gray-200 mx-1"></div>
               <button onClick={resetView} className="w-7 h-7 rounded-full flex items-center justify-center text-gray-400 hover:text-gray-900 hover:bg-gray-100 transition-colors"><Home size={14}/></button>
-            </div>
-
-            {/* 右下角缩放指示器 */}
-            <div className="absolute bottom-6 right-6 flex items-center space-x-2 bg-white/90 backdrop-blur-md border border-gray-200/80 rounded-full px-3 py-1.5 shadow-lg pointer-events-auto z-[100]">
-              <button onClick={() => { const z = Math.max(0.1, zoom - 0.15); zoomRef.current = z; setZoom(z); setPan(p => ({ x: p.x, y: p.y })); }} className="w-6 h-6 rounded-full flex items-center justify-center text-gray-400 hover:text-gray-900 hover:bg-gray-100 transition-colors text-sm font-bold">−</button>
-              <span className="text-xs font-bold text-gray-600 w-12 text-center select-none">{Math.round(zoom * 100)}%</span>
-              <button onClick={() => { const z = Math.min(5, zoom + 0.15); zoomRef.current = z; setZoom(z); setPan(p => ({ x: p.x, y: p.y })); }} className="w-6 h-6 rounded-full flex items-center justify-center text-gray-400 hover:text-gray-900 hover:bg-gray-100 transition-colors text-sm font-bold">+</button>
             </div>
           </React.Fragment>
         )}
@@ -1284,7 +1007,7 @@ export default function App() {
           <div className="w-px h-4 bg-gray-200 mx-1"></div>
           {/* 品牌风格管理器按钮 */}
           <button onClick={() => setIsBrandStyleModalOpen(true)} className={`flex items-center space-x-2 px-4 py-1.5 rounded-lg text-xs font-bold transition-all ${isBrandStyleModalOpen ? 'bg-gray-100 text-gray-900 shadow-inner' : 'text-gray-500 hover:text-gray-800 hover:bg-gray-50'}`}>
-            <Command size={14} strokeWidth={2.5} /><span>品牌风格智控</span>
+            <Command size={14} strokeWidth={2.5} /><span>品牌风格管理器</span>
           </button>
         </div>
         
@@ -1305,253 +1028,11 @@ export default function App() {
           层级 5: 全局操作弹窗 (最高覆盖层)
       ------------------------------------- */}
       
-            {/* 个人中心 Modal */}
-      {isProfileModalOpen && (
-        <div className="fixed inset-0 z-[2000] flex items-center justify-center pointer-events-auto">
-          <div className="absolute inset-0 bg-gray-900/40 backdrop-blur-sm animate-fade-in" onClick={() => setIsProfileModalOpen(false)}></div>
-          <div className="relative bg-white w-[700px] max-w-[96vw] max-h-[88vh] shadow-2xl flex border border-gray-100 overflow-hidden animate-fade-in-up mx-auto" style={{ borderRadius: '2rem' }}>
-            {/* 左侧导航 */}
-            <div className="w-[200px] shrink-0 bg-gray-50/50 border-r border-gray-100 flex flex-col">
-              {/* 用户信息 */}
-              <div className="px-4 pt-5 pb-4 border-b border-gray-100">
-                <div className="flex flex-col items-center text-center">
-                  <div className="w-14 h-14 rounded-full bg-gradient-to-tr from-indigo-500 to-purple-500 text-white flex items-center justify-center text-xl font-bold shadow-lg shadow-indigo-200 mb-2.5">李</div>
-                  <h3 className="text-[14px] font-bold text-gray-900">李导</h3>
-                  <p className="text-[10px] text-gray-500 mt-0.5">li.director@studio.com</p>
-                  <span className="inline-block mt-1.5 text-[9px] font-bold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded-full border border-indigo-100">Pro 创作者</span>
-                </div>
-                <div className="mt-3 p-2.5 bg-white border border-gray-200 rounded-xl flex items-center justify-between">
-                  <div className="flex items-center space-x-2">
-                    <Coins size={15} className="text-amber-500" />
-                    <span className="text-[12px] font-mono font-bold text-gray-900">{credits.toLocaleString()}</span>
-                  </div>
-                  <span className="text-[9px] text-gray-400">积分</span>
-                </div>
-              </div>
-
-              {/* 菜单 */}
-              <div className="flex-1 py-2">
-                {[
-                  { key: 'overview', icon: UserCircle, label: '个人主页' },
-                  { key: 'credits', icon: Coins, label: '积分余额' },
-                  { key: 'subscription', icon: CreditCard, label: '订阅与开票' },
-                  { key: 'account', icon: Shield, label: '账号管理' },
-                  { key: 'help', icon: HelpCircle, label: '帮助中心' },
-                ].map(item => (
-                  <button
-                    key={item.key}
-                    onClick={() => setProfileTab(item.key)}
-                    className={`w-full flex items-center px-4 py-2.5 text-left transition-colors group ${profileTab === item.key ? 'bg-white border-l-[3px] border-indigo-500 text-indigo-600' : 'border-l-[3px] border-transparent text-gray-600 hover:bg-gray-100/50'}`}
-                  >
-                    <item.icon size={15} strokeWidth={2} className="mr-3" />
-                    <span className="text-[12px] font-bold">{item.label}</span>
-                  </button>
-                ))}
-              </div>
-
-              {/* 登出 */}
-              <div className="px-3 py-3 border-t border-gray-100">
-                <button
-                  onClick={() => { setIsProfileModalOpen(false); showMessage("已安全退出登录", "info"); }}
-                  className="w-full flex items-center justify-center space-x-2 py-2 text-[11px] font-bold text-red-500 hover:bg-red-50 rounded-xl transition-colors"
-                >
-                  <LogOut size={13} strokeWidth={2.5} />
-                  <span>登出账号</span>
-                </button>
-              </div>
-            </div>
-
-            {/* 右侧内容 */}
-            <div className="flex-1 flex flex-col overflow-hidden">
-              <div className="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-white shrink-0">
-                <h2 className="text-[14px] font-bold text-gray-800">
-                  {profileTab === 'overview' && '个人主页'}
-                  {profileTab === 'credits' && '积分余额'}
-                  {profileTab === 'subscription' && '订阅与开票'}
-                  {profileTab === 'account' && '账号管理'}
-                  {profileTab === 'help' && '帮助中心'}
-                </h2>
-                <button onClick={() => setIsProfileModalOpen(false)} className="text-gray-400 hover:text-gray-900 transition-colors p-1 bg-gray-50 rounded-full hover:bg-gray-100"><X size={16} strokeWidth={2}/></button>
-              </div>
-
-              <div className="flex-1 overflow-y-auto custom-scrollbar p-6">
-                {/* 个人主页 */}
-                {profileTab === 'overview' && (
-                  <div className="space-y-5 animate-fade-in">
-                    <div className="grid grid-cols-2 gap-4">
-                      <div className="border border-gray-200 rounded-2xl p-4 bg-gradient-to-br from-indigo-50/50 to-white">
-                        <div className="flex items-center space-x-2 mb-2"><Zap size={14} className="text-indigo-500"/><span className="text-[11px] font-bold text-gray-500">可用算力</span></div>
-                        <p className="text-2xl font-mono font-bold text-gray-900">{credits.toLocaleString()}</p>
-                      </div>
-                      <div className="border border-gray-200 rounded-2xl p-4 bg-gradient-to-br from-emerald-50/50 to-white">
-                        <div className="flex items-center space-x-2 mb-2"><CheckCircle2 size={14} className="text-emerald-500"/><span className="text-[11px] font-bold text-gray-500">已完成项目</span></div>
-                        <p className="text-2xl font-mono font-bold text-gray-900">47</p>
-                      </div>
-                      <div className="border border-gray-200 rounded-2xl p-4 bg-gradient-to-br from-amber-50/50 to-white">
-                        <div className="flex items-center space-x-2 mb-2"><ImageIcon size={14} className="text-amber-500"/><span className="text-[11px] font-bold text-gray-500">生成图片</span></div>
-                        <p className="text-2xl font-mono font-bold text-gray-900">1,284</p>
-                      </div>
-                      <div className="border border-gray-200 rounded-2xl p-4 bg-gradient-to-br from-purple-50/50 to-white">
-                        <div className="flex items-center space-x-2 mb-2"><PlaySquare size={14} className="text-purple-500"/><span className="text-[11px] font-bold text-gray-500">生成视频</span></div>
-                        <p className="text-2xl font-mono font-bold text-gray-900">89</p>
-                      </div>
-                    </div>
-                    <div className="border border-gray-200 rounded-2xl p-5">
-                      <p className="text-[12px] font-bold text-gray-800 mb-3">最近活动</p>
-                      {[
-                        { text: '完成了「废弃基地」分镜的渲染', time: '2 分钟前' },
-                        { text: '订阅续费成功 · Pro 创作者计划', time: '1 小时前' },
-                        { text: '上传了 3 个品牌资产到预设', time: '3 小时前' },
-                        { text: '新增团队成员: zhangsan@studio.com', time: '昨天' },
-                      ].map((act, i) => (
-                        <div key={i} className="flex items-center justify-between py-2.5 border-b border-gray-50 last:border-0">
-                          <span className="text-[12px] text-gray-700">{act.text}</span>
-                          <span className="text-[10px] text-gray-400 shrink-0 ml-4">{act.time}</span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {/* 积分余额 */}
-                {profileTab === 'credits' && (
-                  <div className="space-y-5 animate-fade-in">
-                    <div className="bg-gradient-to-br from-amber-50 to-orange-50 border border-amber-200 rounded-2xl p-6 text-center">
-                      <p className="text-[11px] font-bold text-amber-600 uppercase tracking-wider mb-2">当前积分</p>
-                      <p className="text-5xl font-mono font-bold text-gray-900">{credits.toLocaleString()}</p>
-                      <p className="text-[12px] text-gray-500 mt-2">≈ ¥{(credits / 100).toFixed(2)}</p>
-                    </div>
-                    <div>
-                      <p className="text-[12px] font-bold text-gray-500 uppercase tracking-wider mb-3">快速充值</p>
-                      <div className="grid grid-cols-2 gap-3">
-                        {[
-                          { pts: 500, price: '¥5.00', popular: false },
-                          { pts: 2000, price: '¥18.00', popular: true },
-                          { pts: 5000, price: '¥40.00', popular: false },
-                          { pts: 20000, price: '¥150.00', popular: false },
-                        ].map(pkg => (
-                          <button key={pkg.pts} onClick={() => showMessage(`正在跳转支付: ${pkg.price} → ${pkg.pts} 积分`, "success")} className={`p-4 rounded-2xl border-2 transition-all text-left ${pkg.popular ? 'border-indigo-400 bg-indigo-50/30 hover:bg-indigo-100/40 shadow-md shadow-indigo-100' : 'border-gray-200 bg-white hover:border-gray-300 hover:bg-gray-50'}`}>
-                            <div className="flex items-center justify-between mb-1">
-                              <span className="text-[14px] font-bold text-gray-800">{pkg.pts.toLocaleString()}</span>
-                              {pkg.popular && <span className="text-[9px] font-bold bg-indigo-500 text-white px-1.5 py-0.5 rounded-full">推荐</span>}
-                            </div>
-                            <span className="text-[12px] font-bold text-gray-500">{pkg.price}</span>
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                {/* 订阅与开票 */}
-                {profileTab === 'subscription' && (
-                  <div className="space-y-5 animate-fade-in">
-                    <div className="border-2 border-indigo-200 bg-gradient-to-br from-indigo-50 to-purple-50 rounded-2xl p-6">
-                      <div className="flex items-center justify-between mb-3">
-                        <span className="text-[11px] font-bold text-indigo-600 uppercase tracking-wider">当前方案</span>
-                        <span className="text-[10px] font-bold bg-indigo-500 text-white px-2 py-0.5 rounded-full">生效中</span>
-                      </div>
-                      <p className="text-2xl font-bold text-gray-900">Pro 创作者</p>
-                      <p className="text-[12px] text-gray-500 mt-1">¥99/月 · 2026.06.28 到期</p>
-                      <div className="mt-4 space-y-2">
-                        {['无限图文生成', '4K 视频流输出', '优先队列渲染', '品牌风格智控', '团队协作 (5人)'].map(f => (
-                          <div key={f} className="flex items-center space-x-2 text-[12px] text-gray-700"><CheckCircle2 size={12} className="text-green-500 shrink-0" /><span>{f}</span></div>
-                        ))}
-                      </div>
-                      <div className="mt-4 flex space-x-2">
-                        <button onClick={() => showMessage("续费成功", "success")} className="px-4 py-2 bg-indigo-600 text-white text-[11px] font-bold rounded-xl hover:bg-indigo-700 transition-colors">续费方案</button>
-                        <button onClick={() => showMessage("已发送取消确认邮件", "info")} className="px-4 py-2 bg-white border border-gray-200 text-gray-700 text-[11px] font-bold rounded-xl hover:bg-gray-50 transition-colors">取消订阅</button>
-                      </div>
-                    </div>
-                    <div>
-                      <p className="text-[12px] font-bold text-gray-500 uppercase tracking-wider mb-3">开票记录</p>
-                      <div className="space-y-2">
-                        {[
-                          { id: 'INV-20260501', date: '2026.05.01', amount: '¥99.00', status: '已开票' },
-                          { id: 'INV-20260401', date: '2026.04.01', amount: '¥99.00', status: '已开票' },
-                          { id: 'INV-20260301', date: '2026.03.01', amount: '¥99.00', status: '已开票' },
-                        ].map(inv => (
-                          <div key={inv.id} className="flex items-center justify-between p-3 bg-white border border-gray-200 rounded-xl hover:border-gray-300 transition-colors">
-                            <div className="flex items-center space-x-3">
-                              <Receipt size={14} className="text-gray-400" />
-                              <div>
-                                <p className="text-[12px] font-bold text-gray-800">{inv.id}</p>
-                                <p className="text-[10px] text-gray-400">{inv.date}</p>
-                              </div>
-                            </div>
-                            <div className="flex items-center space-x-3">
-                              <span className="text-[12px] font-bold text-gray-700">{inv.amount}</span>
-                              <span className="text-[10px] font-bold text-green-600 bg-green-50 px-2 py-0.5 rounded-full">{inv.status}</span>
-                              <Download size={13} className="text-gray-400 hover:text-indigo-600 cursor-pointer" />
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                {/* 账号管理 */}
-                {profileTab === 'account' && (
-                  <div className="space-y-3 animate-fade-in">
-                    {[
-                      { icon: Mail, label: '邮箱地址', value: 'li.director@studio.com', action: '修改' },
-                      { icon: Key, label: '登录密码', value: '············', action: '重置' },
-                      { icon: Bell, label: '消息通知', value: '已开启 (邮件 + 站内)', action: '配置' },
-                      { icon: Globe, label: '语言与地区', value: '简体中文 · 中国', action: '切换' },
-                      { icon: Palette, label: '界面主题', value: '跟随系统', action: '切换' },
-                      { icon: Shield, label: '两步验证', value: '未开启 · 建议启用', action: '开启' },
-                    ].map(item => (
-                      <div key={item.label} className="flex items-center justify-between p-4 bg-white border border-gray-200 rounded-2xl hover:border-gray-300 transition-colors">
-                        <div className="flex items-center space-x-3 min-w-0">
-                          <div className="w-9 h-9 rounded-xl bg-gray-100 flex items-center justify-center shrink-0">
-                            <item.icon size={15} className="text-gray-600" />
-                          </div>
-                          <div className="min-w-0">
-                            <p className="text-[13px] font-bold text-gray-800">{item.label}</p>
-                            <p className="text-[11px] text-gray-400 truncate">{item.value}</p>
-                          </div>
-                        </div>
-                        <button onClick={() => showMessage(`${item.label}设置已打开`, "info")} className="text-[11px] font-bold text-indigo-600 hover:text-indigo-800 shrink-0 ml-3">{item.action}</button>
-                      </div>
-                    ))}
-                  </div>
-                )}
-
-                {/* 帮助中心 */}
-                {profileTab === 'help' && (
-                  <div className="space-y-4 animate-fade-in">
-                    <div className="bg-gray-50 border border-gray-200 rounded-2xl p-3.5 flex items-center space-x-3">
-                      <Search size={16} className="text-gray-400 shrink-0" />
-                      <input placeholder="搜索帮助文档..." className="bg-transparent border-none outline-none text-[12px] w-full text-gray-700 font-medium placeholder:text-gray-400" />
-                    </div>
-                    {[
-                      { title: '快速入门指南', desc: '5 分钟上手 VideoStudio Pro' },
-                      { title: '画布与节点操作', desc: '拖拽、连线、编组详解' },
-                      { title: '提示词编写技巧', desc: '图文视频提示词最佳实践' },
-                      { title: '品牌风格智控', desc: '统一视觉调性的方法' },
-                      { title: '团队协作功能', desc: '邀请成员与权限管理' },
-                      { title: '计费与积分规则', desc: '算力消耗与充值说明' },
-                      { title: 'API 文档与对接', desc: '开发者接口文档' },
-                    ].map(doc => (
-                      <button key={doc.title} onClick={() => showMessage(`正在打开: ${doc.title}`, "info")} className="w-full text-left p-4 bg-white border border-gray-200 rounded-2xl hover:border-indigo-300 hover:bg-indigo-50/30 transition-all group">
-                        <p className="text-[13px] font-bold text-gray-800 group-hover:text-indigo-700">{doc.title}</p>
-                        <p className="text-[11px] text-gray-400 mt-0.5">{doc.desc}</p>
-                      </button>
-                    ))}
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
       {/* 偏好设置 Modal */}
       {isSettingsModalOpen && (
         <div className="fixed inset-0 z-[2000] flex items-center justify-center pointer-events-auto">
           <div className="absolute inset-0 bg-gray-900/40 backdrop-blur-sm animate-fade-in" onClick={() => setIsSettingsModalOpen(false)}></div>
-          <div className="relative bg-white w-[640px] max-w-[96vw] max-h-[90vh] shadow-2xl flex flex-col border border-gray-100 overflow-hidden animate-fade-in-up mx-auto" style={{ borderRadius: '2rem' }}>
+          <div className="relative bg-white w-[640px] shadow-2xl flex flex-col border border-gray-100 overflow-hidden animate-fade-in-up" style={{ borderRadius: '2rem' }}>
             <div className="px-6 py-5 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
               <div className="flex items-center space-x-2.5">
                 <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-gray-700"><Settings size={16} strokeWidth={2.5}/></div>
@@ -1572,7 +1053,6 @@ export default function App() {
                       <label className="text-[13px] font-bold text-gray-800 block mb-2">默认工作区模型</label>
                       <select className="w-full bg-gray-50 border border-gray-200 rounded-xl p-3 text-[13px] text-gray-700 font-medium outline-none focus:border-indigo-500 transition-colors" value={textApiModel} onChange={(e) => setTextApiModel(e.target.value)}>
                         <option value="Gemini 3.5 Flash">Gemini 3.5 Flash (系统推荐)</option>
-                        <option value="Gemini 3.5 Flash-Lite">Gemini 3.5 Flash-Lite</option>
                         <option value="Gemini 3.1 Pro">Gemini 3.1 Pro</option>
                       </select>
                     </div>
@@ -1607,7 +1087,7 @@ export default function App() {
       {isTeamModalOpen && (
         <div className="fixed inset-0 z-[2000] flex items-center justify-center pointer-events-auto">
           <div className="absolute inset-0 bg-gray-900/30 backdrop-blur-sm animate-fade-in" onClick={() => setIsTeamModalOpen(false)}></div>
-          <div className="relative bg-white w-[540px] max-w-[96vw] max-h-[90vh] shadow-2xl flex flex-col border border-gray-100 overflow-hidden animate-fade-in-up mx-auto" style={{ borderRadius: '2rem' }}>
+          <div className="relative bg-white w-[540px] shadow-2xl flex flex-col border border-gray-100 overflow-hidden animate-fade-in-up" style={{ borderRadius: '2rem' }}>
             <div className="px-6 py-5 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
               <div className="flex items-center space-x-2.5">
                 <div className="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600"><Users size={16} strokeWidth={2.5}/></div>
@@ -1631,111 +1111,70 @@ export default function App() {
         </div>
       )}
 
+      {/* 个人中心 Modal */}
+      {isProfileModalOpen && (
+        <div className="fixed inset-0 z-[2000] flex items-center justify-center pointer-events-auto">
+          <div className="absolute inset-0 bg-gray-900/40 backdrop-blur-sm animate-fade-in" onClick={() => setIsProfileModalOpen(false)}></div>
+          <div className="relative bg-white w-[640px] shadow-2xl flex flex-col border border-gray-100 overflow-hidden animate-fade-in-up" style={{ borderRadius: '2rem' }}>
+            <div className="px-6 py-5 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
+              <div className="flex items-center space-x-2.5">
+                <div className="w-8 h-8 rounded-full bg-gray-900 flex items-center justify-center text-white"><UserCircle size={16} strokeWidth={2.5}/></div>
+                <h2 className="text-[15px] font-bold text-gray-800">个人中心 & 账户资产</h2>
+              </div>
+              <button onClick={() => setIsProfileModalOpen(false)} className="text-gray-400 hover:text-gray-900 transition-colors p-1 bg-white rounded-full hover:bg-gray-100"><X size={18} strokeWidth={2}/></button>
+            </div>
+            <div className="p-6 space-y-6">
+              <div className="flex items-center p-4 bg-gray-50/80 border border-gray-100 rounded-2xl">
+                <div className="w-16 h-16 rounded-full bg-gradient-to-tr from-indigo-500 to-purple-500 text-white flex items-center justify-center text-xl font-bold">李</div>
+                <div className="ml-4 flex-1">
+                  <h3 className="text-lg font-bold text-gray-900">李导</h3>
+                  <p className="text-xs text-gray-500 mt-0.5">li.director@studio.com</p>
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="border border-gray-100 rounded-2xl p-5 bg-white shadow-sm relative overflow-hidden group hover:border-indigo-200 transition-colors">
+                  <div className="absolute top-0 right-0 w-24 h-24 bg-indigo-500/10 rounded-full blur-2xl translate-x-1/2 -translate-y-1/2 group-hover:scale-125 transition-transform duration-700"></div>
+                  <div className="flex items-center space-x-2 mb-3 relative z-10"><Zap size={16} className="text-indigo-500"/><span className="text-[13px] font-bold text-gray-700">可用算力</span></div>
+                  <div className="flex items-baseline space-x-1 mb-2 relative z-10"><span className="text-3xl font-mono font-bold text-gray-900">{credits.toLocaleString()}</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* 品牌风格管理器 Modal */}
       {isBrandStyleModalOpen && (
         <div className="fixed inset-0 z-[2000] flex items-center justify-center pointer-events-auto">
           <div className="absolute inset-0 bg-gray-900/40 backdrop-blur-sm animate-fade-in" onClick={() => setIsBrandStyleModalOpen(false)}></div>
           
-          <div className="relative bg-white w-[850px] max-w-[96vw] max-h-[90vh] shadow-2xl flex flex-col border border-gray-200 overflow-hidden animate-fade-in-up mx-auto" style={{ borderRadius: '2.5rem' }}>
+          <div className="relative bg-white w-full max-w-[800px] shadow-2xl flex flex-col border border-gray-200 overflow-hidden animate-fade-in-up" style={{ borderRadius: '2.5rem' }}>
             <button onClick={() => setIsBrandStyleModalOpen(false)} className="absolute top-6 right-6 text-gray-400 hover:text-gray-900 transition-colors p-2 bg-gray-50 rounded-full hover:bg-gray-100 z-50"><X size={18} strokeWidth={2.5}/></button>
 
-            <div className="px-10 pt-10 pb-6 border-b border-gray-100 bg-gray-50/30 flex items-center space-x-4 shrink-0">
+            <div className="px-10 pt-10 pb-6 border-b border-gray-100 bg-gray-50/30 flex items-center space-x-4">
                <div className="w-14 h-14 rounded-full bg-indigo-50 flex items-center justify-center text-indigo-600 shadow-sm border border-indigo-100/50">
                  <Command size={26} strokeWidth={2}/>
                </div>
                <div>
                  <h2 className="text-[22px] font-bold text-gray-900 tracking-wide">品牌风格管理器</h2>
-                 <p className="text-[12px] text-gray-500 font-medium mt-1">全局控制您的创作基调，上传核心资产，系统将自动对齐</p>
+                 <p className="text-[12px] text-gray-500 font-medium mt-1">Brand Style & Intelligence Control</p>
                </div>
             </div>
 
-            <div className="flex-1 overflow-y-auto p-10 space-y-10 custom-scrollbar">
-               
-               {/* ---------------------------------------------------- */}
-               {/* 新增: 预设名称输入区                                 */}
-               {/* ---------------------------------------------------- */}
-               <div className="space-y-3">
-                 <label className="text-[13px] font-bold text-gray-700">风格预设命名 (Preset Name)</label>
-                 <input 
-                   type="text" 
-                   value={brandStyleName} 
-                   onChange={(e) => setBrandStyleName(e.target.value)} 
-                   placeholder="例如：2026 春夏系列大片、科幻微短剧A组..." 
-                   className="w-full bg-gray-50/80 border border-gray-200/80 rounded-2xl p-4 text-[15px] text-gray-900 font-bold outline-none focus:border-indigo-500 focus:bg-white focus:shadow-sm transition-all placeholder:text-gray-400"
-                 />
-               </div>
-
-               <div className="w-full h-px bg-gray-100"></div>
-
-               {/* ---------------------------------------------------- */}
-               {/* 核心品牌资产上传区                                     */}
-               {/* ---------------------------------------------------- */}
+            <div className="flex-1 overflow-y-auto p-10 space-y-12 custom-scrollbar">
                <div className="space-y-4">
                  <div className="flex items-center space-x-2">
                    <div className="w-1.5 h-4 bg-indigo-600 rounded-full"></div>
-                   <h3 className="text-[15px] font-bold text-gray-800">STEP 1 核心品牌资产锚定</h3>
-                 </div>
-                 
-                 <div className="flex gap-4 overflow-x-auto custom-scrollbar pb-2 pt-1 px-1 -mx-1">
-                    {/* 上传按钮卡片 */}
-                    <button 
-                       onClick={() => {
-                         // 模拟上传动作，添加一个占位素材
-                         setUploadedBrandAssets([...uploadedBrandAssets, { 
-                           id: Date.now(), 
-                           url: 'https://images.unsplash.com/photo-1541535898860-31e3674d8124?q=80&w=200', 
-                           type: 'image', 
-                           name: '产品主图_A' 
-                         }]);
-                         showMessage("品牌资产已成功上传并进入解析队列", "success");
-                       }}
-                       className="shrink-0 w-32 h-32 rounded-2xl border-2 border-dashed border-gray-300 bg-gray-50 flex flex-col items-center justify-center text-gray-400 hover:text-indigo-600 hover:border-indigo-400 hover:bg-indigo-50/50 transition-colors group cursor-pointer"
-                    >
-                      <PlusCircle size={28} className="mb-2 group-hover:scale-110 transition-transform"/>
-                      <span className="text-[11px] font-bold">上传图/视频</span>
-                    </button>
-                    
-                    {/* 已上传资产列表 */}
-                    {uploadedBrandAssets.map((asset) => (
-                      <div key={asset.id} className="shrink-0 w-32 h-32 rounded-2xl border border-gray-200 bg-white relative overflow-hidden group shadow-sm hover:border-indigo-500 transition-colors">
-                        <img src={asset.url} alt={asset.name} className="w-full h-full object-cover" />
-                        <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 to-transparent p-2 pt-6">
-                           <span className="text-[10px] text-white font-bold truncate block">{asset.name}</span>
-                        </div>
-                        <button 
-                           onClick={(e) => { e.stopPropagation(); setUploadedBrandAssets(uploadedBrandAssets.filter(a => a.id !== asset.id)); }}
-                           className="absolute top-2 right-2 w-6 h-6 bg-black/50 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 hover:bg-red-500 transition-all backdrop-blur-md"
-                        >
-                          <X size={12} strokeWidth={3}/>
-                        </button>
-                      </div>
-                    ))}
-                    
-                    {uploadedBrandAssets.length === 0 && (
-                      <div className="flex-1 min-w-[200px] h-32 rounded-2xl border border-gray-100 bg-gray-50/50 flex flex-col items-center justify-center text-center p-4">
-                        <Monitor size={24} className="text-gray-300 mb-2"/>
-                        <p className="text-[12px] text-gray-500 font-medium">支持上传 Logo、产品图、参考视频<br/>AI 将强制锁定这些资产的视觉特征</p>
-                      </div>
-                    )}
-                 </div>
-               </div>
-
-               <div className="w-full h-px bg-gray-100"></div>
-
-               {/* STEP 2: 核心场景 */}
-               <div className="space-y-4">
-                 <div className="flex items-center space-x-2">
-                   <div className="w-1.5 h-4 bg-indigo-600 rounded-full"></div>
-                   <h3 className="text-[15px] font-bold text-gray-800">STEP 2 应用场景选择</h3>
+                   <h3 className="text-[15px] font-bold text-gray-800">STEP 1 选择应用场景</h3>
                  </div>
                  <div className="flex flex-wrap gap-2.5">
-                   {['TVC 广告', '电影预告片', '电商主图视频', '短剧场景', '小红书种草', '高端产品广告', '国风美学', '动漫/二次元', '赛博科幻'].map(s => (
+                   {['TVC 广告', '电商短视频', '小红书种草', '高端产品广告', '国风', '日系', '科技感'].map(s => (
                      <button
                        key={s}
                        onClick={() => setBrandScenario(s)}
                        className={`px-4 py-2.5 rounded-xl text-[13px] font-bold transition-all shadow-sm ${
                          brandScenario === s
-                           ? 'bg-gray-900 text-white scale-[1.02] ring-2 ring-gray-900 ring-offset-1'
+                           ? 'bg-gray-900 text-white scale-[1.02]'
                            : 'bg-white text-gray-500 hover:bg-gray-50 border border-gray-200/80 hover:text-gray-800'
                        }`}
                      >
@@ -1747,87 +1186,68 @@ export default function App() {
 
                <div className="w-full h-px bg-gray-100"></div>
 
-               {/* AI 分析提示标签 */}
-               <div className="space-y-3 bg-indigo-50/40 p-5 rounded-2xl border border-indigo-100/50">
+               <div className="space-y-3">
                  <div className="flex items-center justify-between">
-                   <label className="text-[13px] font-bold text-indigo-900 flex items-center">
-                     <Sparkles size={16} className="mr-2 text-indigo-600" />
-                     AI 分析推荐底层标签 
+                   <label className="text-[13px] font-bold text-gray-800 flex items-center">
+                     系统智能分析的风格标签 
                      {analyzingTags && <RefreshCw size={14} className="ml-2 text-indigo-500 animate-spin" />}
                    </label>
+                   <span className="text-[9px] font-bold text-indigo-600 bg-indigo-50 px-2.5 py-1 rounded-md border border-indigo-100">已智能组装底层工作流</span>
                  </div>
                  
                  <div className={`flex flex-wrap gap-2 pt-1 transition-opacity duration-300 ${analyzingTags ? 'opacity-30' : 'opacity-100'}`}>
                    {getScenarioTags(brandScenario).map(tag => (
-                     <span key={tag} className="px-3 py-1.5 bg-white/80 text-indigo-800 border border-indigo-200/50 rounded-lg text-[12px] font-bold shadow-sm">{tag}</span>
+                     <span key={tag} className="px-3 py-1.5 bg-white text-gray-800 border border-gray-200/80 rounded-lg text-[12px] font-bold shadow-sm">{tag}</span>
                    ))}
                  </div>
+                 <div className="p-4 mt-3 bg-gray-50/80 border border-gray-100 rounded-[1rem] relative overflow-hidden">
+                   <div className="absolute top-0 left-0 w-1 h-full bg-gradient-to-b from-indigo-500 to-purple-500"></div>
+                   <p className="text-[11px] text-gray-500 leading-relaxed font-medium pl-2">系统已自动深度分析：色彩、光影、镜头语言、构图、颗粒感、运动节奏等核心底层特征。后台已为您自动配置相关参数并挂载 ControlNet，您只需专注于创意，体验将会非常高级。</p>
+                 </div>
                </div>
 
-               {/* STEP 3: 画面细节控制 */}
+               <div className="w-full h-px bg-gray-100"></div>
+
                <div className="space-y-6">
-                 <div className="flex items-center space-x-2 mb-2">
+                 <div className="flex items-center space-x-2 mb-4">
                    <div className="w-1.5 h-4 bg-indigo-600 rounded-full"></div>
-                   <h3 className="text-[15px] font-bold text-gray-800">STEP 3 画面与物理规律设定</h3>
+                   <h3 className="text-[15px] font-bold text-gray-800">STEP 2 画面微调设置</h3>
                  </div>
 
-                 <div className="grid grid-cols-2 gap-6">
-                    {/* 光影质感 */}
-                    <div className="space-y-2.5">
-                      <label className="text-[12px] font-bold text-gray-500 uppercase tracking-wider block">光影与氛围 (Lighting)</label>
-                      <select value={brandLighting} onChange={(e) => setBrandLighting(e.target.value)} className="w-full bg-gray-50 border border-gray-200 rounded-xl p-3 text-[13px] text-gray-800 font-bold outline-none focus:border-indigo-500 focus:bg-white transition-colors cursor-pointer appearance-none">
-                        <option value="电影级柔光">电影级柔光 (Cinematic Soft)</option>
-                        <option value="伦勃朗硬光">伦勃朗硬光 (Rembrandt Hard)</option>
-                        <option value="自然日光">自然日光 (Natural Daylight)</option>
-                        <option value="赛博霓虹光">赛博霓虹光 (Cyberpunk Neon)</option>
-                        <option value="顶光/情绪光">顶光/情绪光 (Top Mood Lighting)</option>
-                      </select>
-                    </div>
+                 <div className="space-y-3">
+                   <div className="flex justify-between items-center text-[13px] font-bold text-gray-800">
+                     <span>风格强度 <span className="text-gray-400 font-normal ml-1 text-[11px]">(取代繁琐的 LoRA Weight)</span></span>
+                     <span className="text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded border border-indigo-100">{brandStrength}%</span>
+                   </div>
+                   <input type="range" min="0" max="100" value={brandStrength} onChange={(e) => setBrandStrength(e.target.value)} className="w-full accent-gray-900" />
+                   <div className="flex justify-between text-[11px] text-gray-400 font-bold px-1"><span>弱</span><span>强</span></div>
+                 </div>
 
-                    {/* 色彩偏好 */}
-                    <div className="space-y-2.5">
-                      <label className="text-[12px] font-bold text-gray-500 uppercase tracking-wider block">色彩基调 (Color Grading)</label>
-                      <select value={brandColor} onChange={(e) => setBrandColor(e.target.value)} className="w-full bg-gray-50 border border-gray-200 rounded-xl p-3 text-[13px] text-gray-800 font-bold outline-none focus:border-indigo-500 focus:bg-white transition-colors cursor-pointer appearance-none">
-                        <option value="高级灰/低饱和">高级灰 / 低饱和 (Low Saturation)</option>
-                        <option value="电影感青橙调">电影感青橙调 (Teal & Orange)</option>
-                        <option value="明亮高饱和">明亮高饱和 (Vivid High Saturation)</option>
-                        <option value="复古胶片感">复古胶片色 (Retro Film)</option>
-                        <option value="黑白高反差">黑白高反差 (B&W High Contrast)</option>
-                      </select>
-                    </div>
+                 <div className="space-y-3 pt-2">
+                   <div className="flex justify-between items-center text-[13px] font-bold text-gray-800">
+                     <span>风格稳定性 <span className="text-gray-400 font-normal ml-1 text-[11px]">(控制生成随机性与发散度)</span></span>
+                     <span className="text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded border border-indigo-100">{brandStability}%</span>
+                   </div>
+                   <input type="range" min="0" max="100" value={brandStability} onChange={(e) => setBrandStability(e.target.value)} className="w-full accent-gray-900" />
+                   <div className="flex justify-between text-[11px] text-gray-400 font-bold px-1"><span>自由</span><span>稳定</span></div>
+                 </div>
 
-                    {/* 镜头焦段 */}
-                    <div className="space-y-2.5">
-                      <label className="text-[12px] font-bold text-gray-500 uppercase tracking-wider block">默认镜头焦段 (Lens)</label>
-                      <select value={brandLens} onChange={(e) => setBrandLens(e.target.value)} className="w-full bg-gray-50 border border-gray-200 rounded-xl p-3 text-[13px] text-gray-800 font-bold outline-none focus:border-indigo-500 focus:bg-white transition-colors cursor-pointer appearance-none">
-                        <option value="35mm 人文视角">35mm 经典人文视角</option>
-                        <option value="50mm 人像/细节">50mm 黄金人像视角</option>
-                        <option value="14mm 超广角/宏大场景">14mm 超广角 (宏大场景)</option>
-                        <option value="100mm 微距/质感">100mm 微距特写</option>
-                        <option value="第一人称视角">FPV 第一人称穿越</option>
-                      </select>
-                    </div>
-
-                    {/* 物理运动幅度 */}
-                    <div className="space-y-2.5">
-                      <label className="text-[12px] font-bold text-gray-500 uppercase tracking-wider block">主体动作幅度 (Motion)</label>
-                      <div className="flex bg-gray-50 border border-gray-200 rounded-xl p-1 h-[46px]">
-                         {['微动 (氛围感)', '常规动作', '剧烈运动'].map(m => (
-                           <button key={m} onClick={() => setMotionIntensity(m)} className={`flex-1 text-[12px] font-bold rounded-lg transition-all ${motionIntensity === m ? 'bg-white text-gray-900 shadow-sm border border-gray-100' : 'text-gray-500 hover:text-gray-800'}`}>
-                             {m.split(' ')[0]}
-                           </button>
-                         ))}
-                      </div>
-                    </div>
+                 <div className="space-y-3 pt-2">
+                   <div className="flex justify-between items-center text-[13px] font-bold text-gray-800">
+                     <span>保留原始内容 <span className="text-gray-400 font-normal ml-1 text-[11px]">(适合固定品牌产品、人脸等 Identity Control)</span></span>
+                     <span className="text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded border border-indigo-100">{brandPreserve}%</span>
+                   </div>
+                   <input type="range" min="0" max="100" value={brandPreserve} onChange={(e) => setBrandPreserve(e.target.value)} className="w-full accent-gray-900" />
+                   <div className="flex justify-between text-[11px] text-gray-400 font-bold px-1"><span>低</span><span>高</span></div>
                  </div>
                </div>
 
-               <div className="pt-8 pb-4 shrink-0">
+               <div className="pt-4 pb-2">
                  <button 
-                   onClick={() => { setIsBrandStyleModalOpen(false); showMessage(`已应用预设【${brandStyleName || brandScenario}】并同步物理引擎设定`, "success"); }} 
-                   className="w-full py-4 bg-gray-900 text-white text-[15px] font-bold rounded-2xl shadow-xl shadow-gray-900/20 hover:bg-black transition-all hover:-translate-y-0.5 flex items-center justify-center space-x-2"
+                   onClick={() => { setIsBrandStyleModalOpen(false); showMessage(`【${brandScenario}】风格引擎已激活应用至工作流`, "success"); }} 
+                   className="w-full py-4 bg-gray-900 text-white text-[14px] font-bold rounded-xl shadow-lg hover:bg-black transition-all hover:-translate-y-0.5 flex items-center justify-center space-x-2"
                  >
-                   <Aperture size={18}/><span>应用全局视觉参数</span>
+                   <Sparkles size={16}/><span>确认应用并自动配置镜头</span>
                  </button>
                </div>
             </div>
@@ -1839,7 +1259,7 @@ export default function App() {
       <style dangerouslySetInnerHTML={{__html: `
         .dot-pattern { background-image: radial-gradient(rgba(0, 0, 0, 0.06) 1.5px, transparent 1.5px); background-size: 32px 32px; }
         .custom-scrollbar::-webkit-scrollbar { height: 0px; width: 0px; }
-        @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeInUp { from { opacity: 0; transform: translate(-50%, 20px); } to { opacity: 1; transform: translate(-50%, 0); } }
         .animate-fade-in-up { animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
         @keyframes slideUpNode { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
         .animate-slide-up-node { animation: slideUpNode 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
