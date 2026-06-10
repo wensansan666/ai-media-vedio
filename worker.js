@@ -2,7 +2,6 @@ export default {
   async fetch(request, env) {
     const url = new URL(request.url);
 
-    // CORS 允许前端跨域调用
     const corsHeaders = {
       'Access-Control-Allow-Origin': '*',
       'Access-Control-Allow-Methods': 'POST, OPTIONS',
@@ -23,92 +22,87 @@ export default {
       const body = await request.json();
       const { prompt, type, actionType } = body;
 
-      let model, apiBody;
-
+      // ========== 图片生成：Flux Klein 4B（≈¥0.10/张）==========
       if (type === 'image') {
-        // ===== Nano Banana 2 图片生成 =====
-        model = 'gemini-3.1-flash-image-preview';
-        apiBody = {
-          contents: [{ parts: [{ text: prompt }] }],
-          generationConfig: { responseModalities: ['IMAGE', 'TEXT'] },
-        };
-      } else if (type === 'text' && actionType === 'english_prompt') {
-        // ===== 图片提示词翻译/优化 =====
-        model = 'gemini-2.0-flash';
-        apiBody = {
-          contents: [{
-            parts: [{
-              text: `你是一个专业的AI绘图提示词专家。请把下面这段中文创意描述，提炼成一段高质量的英文图片生成提示词。要求：细节丰富、使用专业摄影/绘画术语、适合输入到AI绘画模型。只需返回英文提示词，不要加任何解释。
-
-中文描述：${prompt}
-英文提示词：`
-            }],
-          }],
-        };
-      } else if (type === 'text') {
-        // ===== Gemini 文本生成（扩写/润色）=====
-        model = 'gemini-2.0-flash';
-        const systemPrompts = {
-          expand: `你是一位专业的影视编剧。请把下面的故事大纲扩写成详细的剧本片段，包含场景描述、人物动作和环境细节。`,
-          polish: `你是一位专业的文字编辑。请润色下面的剧本段落，优化语气和节奏，保持原意但让文字更有画面感。`,
-        };
-        const sysPrompt = systemPrompts[actionType] || systemPrompts.expand;
-        apiBody = {
-          contents: [{ parts: [{ text: `${sysPrompt}\n\n原文：${prompt}\n\n改写结果：` }] }],
-        };
-      } else {
-        return new Response(JSON.stringify({ error: 'Invalid type' }), {
-          status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        });
-      }
-
-      // 调用 Google AI API
-      const apiResp = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${env.GOOGLE_API_KEY}`,
-        {
+        const apiResp = await fetch('https://openrouter.ai/api/v1/chat/completions', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(apiBody),
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${env.OPENROUTER_API_KEY}`,
+          },
+          body: JSON.stringify({
+            model: 'black-forest-labs/flux.2-klein-4b',
+            messages: [{ role: 'user', content: prompt }],
+            modalities: ['image'],
+          }),
+        });
+
+        const data = await apiResp.json();
+
+        if (!apiResp.ok || data.error) {
+          return new Response(JSON.stringify({
+            success: false,
+            error: data.error?.message || JSON.stringify(data.error || data),
+          }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
         }
-      );
 
-      const data = await apiResp.json();
+        // 提取 base64 图片
+        const images = data.choices?.[0]?.message?.images || [];
+        if (images.length > 0) {
+          return new Response(JSON.stringify({
+            success: true,
+            image: images[0].image_url?.url || images[0],
+            text: '',
+          }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+        }
 
-      if (!apiResp.ok) {
         return new Response(JSON.stringify({
           success: false,
-          error: data.error?.message || `API request failed`,
-        }), {
-          status: apiResp.status,
+          error: 'No image returned',
+        }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+      }
+
+      // ========== 文本生成：Llama 3.1 8B（≈¥0.00001/次） ==========
+      if (type === 'text') {
+        const systemPrompts = {
+          expand: `你是一位专业的影视编剧。请把下面的故事大纲扩写成详细的剧本片段，包含场景描述、人物动作和环境细节。只输出改写结果。`,
+          polish: `你是一位专业的文字编辑。请润色下面的剧本段落，优化语气和节奏，保持原意但让文字更有画面感。只输出改写结果。`,
+          english_prompt: `你是一个专业的AI绘图提示词专家。请把下面的中文创意描述，提炼成一段高质量的英文图片生成提示词。使用专业摄影/绘画术语。只输出英文提示词，不要解释。`,
+        };
+        const sysPrompt = systemPrompts[actionType] || systemPrompts.expand;
+
+        const apiResp = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${env.OPENROUTER_API_KEY}`,
+          },
+          body: JSON.stringify({
+            model: 'meta-llama/llama-3.1-8b-instruct',
+            messages: [
+              { role: 'system', content: sysPrompt },
+              { role: 'user', content: prompt },
+            ],
+          }),
+        });
+
+        const data = await apiResp.json();
+
+        if (!apiResp.ok || data.error) {
+          return new Response(JSON.stringify({
+            success: false,
+            error: `[${apiResp.status}] ${JSON.stringify(data.error || data)}`,
+          }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+        }
+
+        const text = data.choices?.[0]?.message?.content || '';
+        return new Response(JSON.stringify({ success: true, text }), {
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         });
       }
 
-      // 解析结果
-      const parts = data.candidates?.[0]?.content?.parts || [];
-
-      if (type === 'image') {
-        // 找图片数据
-        const imgPart = parts.find(p => p.inlineData);
-        const textPart = parts.find(p => p.text);
-        if (imgPart) {
-          return new Response(JSON.stringify({
-            success: true,
-            image: `data:${imgPart.inlineData.mimeType};base64,${imgPart.inlineData.data}`,
-            text: textPart?.text || '',
-          }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
-        }
-        // 可能只有 text（被安全过滤了）
-        return new Response(JSON.stringify({
-          success: false,
-          error: textPart?.text || '未生成图片',
-        }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
-      }
-
-      // 文本结果
-      const text = parts.map(p => p.text).filter(Boolean).join('\n');
-      return new Response(JSON.stringify({ success: true, text }), {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      return new Response(JSON.stringify({ error: 'Invalid type' }), {
+        status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     } catch (err) {
       return new Response(JSON.stringify({ success: false, error: err.message }), {
