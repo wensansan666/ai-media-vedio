@@ -62,7 +62,7 @@ export default {
         }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
       }
 
-      // ========== 文本生成：Llama 3.1 8B（≈¥0.00001/次） ==========
+      // ========== 文本生成 ==========
       if (type === 'text') {
         const systemPrompts = {
           expand: `你是一位专业的影视编剧。请把下面的故事大纲扩写成详细的剧本片段，包含场景描述、人物动作和环境细节。只输出改写结果。`,
@@ -71,6 +71,14 @@ export default {
         };
         const sysPrompt = systemPrompts[actionType] || systemPrompts.expand;
 
+        // 根据模型名映射 OpenRouter model ID
+        const MODEL_MAP = {
+          'Gemini Flash': 'google/gemini-2.0-flash-001',
+          'Gemini Pro': 'google/gemini-2.5-pro-preview-05-06',
+          'Llama 3.1 8B': 'meta-llama/llama-3.1-8b-instruct',
+        };
+        const orModel = MODEL_MAP[body.model] || 'google/gemini-2.0-flash-001';
+
         const apiResp = await fetch('https://openrouter.ai/api/v1/chat/completions', {
           method: 'POST',
           headers: {
@@ -78,7 +86,7 @@ export default {
             'Authorization': `Bearer ${env.OPENROUTER_API_KEY}`,
           },
           body: JSON.stringify({
-            model: 'meta-llama/llama-3.1-8b-instruct',
+            model: orModel,
             messages: [
               { role: 'system', content: sysPrompt },
               { role: 'user', content: prompt },

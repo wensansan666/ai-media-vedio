@@ -11,8 +11,10 @@ import {
   Monitor, BarChart2, Eraser, FlipHorizontal, LayoutGrid, ListTree, FileOutput,
   DownloadCloud, UserCircle, Search, Heart, Clock, Filter, Tag, MoreVertical,
   Trash2, Grid3X3, Music, Film, Layers, LogOut, HelpCircle, CreditCard, Shield,
-  Receipt, Coins, ChevronRight, Bell, Palette, Globe
+  Receipt, Coins, ChevronRight, Bell, Palette, Globe, Bot
 } from 'lucide-react';
+import VideoStudioAssistant from './VideoStudioAssistant';
+import PricingModal from './PricingModal';
 
 // --- 悬浮工具栏组件 ---
 const FloatingTextToolbar = () => (
@@ -120,7 +122,7 @@ export default function App() {
   
   const [textApiModel, setTextApiModel] = useState('Gemini 3.5 Flash'); 
   const [imageApiModel, setImageApiModel] = useState('Seedream 4.6'); 
-  const [videoApiModel, setVideoApiModel] = useState('Kling O3'); 
+  const [videoApiModel, setVideoApiModel] = useState('Kling O3');
   const [audioApiModel, setAudioApiModel] = useState('Minimax-speech-2.8-hd'); 
 
   const [openModelDropdownId, setOpenModelDropdownId] = useState(null); 
@@ -153,7 +155,9 @@ export default function App() {
   const [isApprovalFlowOn, setIsApprovalFlowOn] = useState(true);
 
   // 品牌与视觉风格智控状态
+  const [isAssistantOpen, setIsAssistantOpen] = useState(false);
   const [isBrandStyleModalOpen, setIsBrandStyleModalOpen] = useState(false);
+  const [isPricingOpen, setIsPricingOpen] = useState(false);
   const [brandScenario, setBrandScenario] = useState('高端产品广告');
   const [brandLighting, setBrandLighting] = useState('电影级柔光');
   const [brandColor, setBrandColor] = useState('高级灰/低饱和');
@@ -365,6 +369,12 @@ export default function App() {
     if (activeNode === id) setActiveNode(nodes[0]?.id || null);
   };
 
+  // AI 助手部署回调
+  const handleDeploy = (params) => {
+    showMessage(`已部署【${params.skill}】至画布，强度 ${params.intensity}%`, "success");
+    setIsAssistantOpen(false);
+  };
+
   const callWorker = async (type, payload) => {
     const resp = await fetch(WORKER_URL, {
       method: 'POST',
@@ -381,8 +391,10 @@ export default function App() {
       return;
     }
     if (!prompt.trim()) { showMessage("请先在指令区输入提示词！", "error"); return; }
-    const targetNodeIndex = nodes.findIndex(n => n.id === activeNode && n.status === 'empty');
-    if (targetNodeIndex === -1) { showMessage("操作中断：当前节点非空，请先添加一个空白节点接收结果。", "error"); return; }
+    // 优先找空节点，没有就用当前选中节点
+    let targetNodeIndex = nodes.findIndex(n => n.id === activeNode && n.status === 'empty');
+    if (targetNodeIndex === -1) targetNodeIndex = nodes.findIndex(n => n.id === activeNode);
+    if (targetNodeIndex === -1) { showMessage("请先选中一个节点。", "error"); return; }
 
     setIsGenerating(true);
     const targetNode = nodes[targetNodeIndex];
@@ -830,21 +842,27 @@ export default function App() {
                                 <div className="absolute left-0 right-0 top-[calc(100%+6px)] bg-white border border-gray-200 shadow-2xl rounded-xl overflow-hidden flex flex-col py-1.5 max-h-[280px] overflow-y-auto custom-scrollbar animate-fade-in-down z-[100]">
                                   {isMediaNode ? (
                                     <React.Fragment>
-                                      {node.type === 'video' && (
+                                      {node.type === 'video' ? (
+                                        // ===== 视频节点：只显示视频模型 =====
                                         <React.Fragment>
                                           <div onClick={() => { setVideoApiModel('Happy Horse 1.0'); setOpenModelDropdownId(null); }} className="px-4 py-2.5 text-[13px] font-bold cursor-pointer flex items-center hover:bg-gray-50"><span className="mr-2 text-[14px]">🎠</span> <span>Happy Horse 1.0</span></div>
                                           <div onClick={() => { setVideoApiModel('Kling O3'); setOpenModelDropdownId(null); }} className="px-4 py-2.5 text-[13px] font-bold cursor-pointer flex items-center hover:bg-gray-50"><Aperture size={14} className="text-gray-400 mr-2" /> <span>Kling O3</span></div>
                                           <div onClick={() => { setVideoApiModel('Kling 3.0'); setOpenModelDropdownId(null); }} className="px-4 py-2.5 text-[13px] font-bold cursor-pointer flex items-center hover:bg-gray-50"><Aperture size={14} className="text-gray-400 mr-2" /> <span>Kling 3.0</span></div>
                                           <div onClick={() => { setVideoApiModel('Wan 2.7'); setOpenModelDropdownId(null); }} className="px-4 py-2.5 text-[13px] font-bold cursor-pointer flex items-center hover:bg-gray-50"><Hexagon size={14} className="text-gray-400 mr-2" /> <span>Wan 2.7</span></div>
                                           <div onClick={() => { setVideoApiModel('Kling O1'); setOpenModelDropdownId(null); }} className="px-4 py-2.5 text-[13px] font-bold cursor-pointer flex items-center hover:bg-gray-50"><Aperture size={14} className="text-gray-400 mr-2" /> <span>Kling O1</span></div>
-                                          <div className="w-full h-px bg-gray-100 my-1"></div>
+                                          <div onClick={() => { setVideoApiModel('Seedance 2.0'); setOpenModelDropdownId(null); }} className="px-4 py-2.5 text-[13px] font-bold cursor-pointer flex items-center hover:bg-gray-50"><Activity size={14} className="text-gray-400 mr-2" /> <span>Seedance 2.0</span></div>
+                                          <div onClick={() => { setVideoApiModel('Seedance 2.0 Fast'); setOpenModelDropdownId(null); }} className="px-4 py-2.5 text-[13px] font-bold cursor-pointer flex items-center hover:bg-gray-50"><Activity size={14} className="text-gray-400 mr-2" /> <span>Seedance 2.0 Fast</span></div>
+                                        </React.Fragment>
+                                      ) : (
+                                        // ===== 图像节点：只显示图像模型 =====
+                                        <React.Fragment>
+                                          <div onClick={() => { setImageApiModel('Nano Banana Pro'); setOpenModelDropdownId(null); }} className="px-4 py-2.5 text-[13px] font-bold cursor-pointer flex items-center hover:bg-gray-50"><span className="mr-2">🍌</span> <span>Nano Banana Pro</span></div>
+                                          <div onClick={() => { setImageApiModel('Nano Banana 2'); setOpenModelDropdownId(null); }} className="px-4 py-2.5 text-[13px] font-bold cursor-pointer flex items-center hover:bg-gray-50"><span className="mr-2">🍌</span> <span>Nano Banana 2</span></div>
+                                          <div onClick={() => { setImageApiModel('Seedream 4.6'); setOpenModelDropdownId(null); }} className="px-4 py-2.5 text-[13px] font-bold cursor-pointer flex items-center hover:bg-gray-50"><Activity size={14} className="text-gray-400 mr-2" /> <span>Seedream 4.6</span></div>
+                                          <div onClick={() => { setImageApiModel('Seedream 5.0 Lite'); setOpenModelDropdownId(null); }} className="px-4 py-2.5 text-[13px] font-bold cursor-pointer flex items-center hover:bg-gray-50"><Activity size={14} className="text-gray-400 mr-2" /> <span>Seedream 5.0 Lite</span></div>
+                                          <div onClick={() => { setImageApiModel('Midjourney V7'); setOpenModelDropdownId(null); }} className="px-4 py-2.5 text-[13px] font-bold cursor-pointer flex items-center hover:bg-gray-50"><span className="mr-2">⛵</span> <span>Midjourney V7</span></div>
                                         </React.Fragment>
                                       )}
-                                      <div onClick={() => { setImageApiModel('Seedream 4.6'); setOpenModelDropdownId(null); }} className="px-4 py-2.5 text-[13px] font-bold cursor-pointer flex items-center hover:bg-gray-50"><Activity size={14} className="text-gray-400 mr-2" /> <span>Seedream 4.6</span></div>
-                                      <div onClick={() => { setImageApiModel('Seedream 5.0 Lite'); setOpenModelDropdownId(null); }} className="px-4 py-2.5 text-[13px] font-bold cursor-pointer flex items-center hover:bg-gray-50"><Activity size={14} className="text-gray-400 mr-2" /> <span>Seedream 5.0 Lite</span></div>
-                                      <div onClick={() => { setImageApiModel('Midjourney V7'); setOpenModelDropdownId(null); }} className="px-4 py-2.5 text-[13px] font-bold cursor-pointer flex items-center hover:bg-gray-50"><span className="mr-2">⛵</span> <span>Midjourney V7</span></div>
-                                      <div onClick={() => { setImageApiModel('Nano Banana Pro'); setOpenModelDropdownId(null); }} className="px-4 py-2.5 text-[13px] font-bold cursor-pointer flex items-center hover:bg-gray-50"><span className="mr-2">🍌</span> <span>Nano Banana Pro</span></div>
-                                      <div onClick={() => { setImageApiModel('Nano Banana 2'); setOpenModelDropdownId(null); }} className="px-4 py-2.5 text-[13px] font-bold cursor-pointer flex items-center hover:bg-gray-50"><span className="mr-2">🍌</span> <span>Nano Banana 2</span></div>
                                     </React.Fragment>
                                   ) : isAudioNode ? (
                                     <React.Fragment>
@@ -973,7 +991,7 @@ export default function App() {
                 </button>
                 <div className="flex flex-col space-y-3 w-full px-2 items-center">
                    <button onClick={() => setActiveSidebar(activeSidebar === 'assets' ? null : 'assets')} className={`w-11 h-11 rounded-[14px] flex items-center justify-center transition-colors ${activeSidebar === 'assets' ? 'bg-indigo-50 text-indigo-600 border border-indigo-100/50 shadow-sm' : 'text-gray-400 hover:text-indigo-600 hover:bg-gray-50'}`} title="资产库"><FolderOpen size={22} strokeWidth={1.5}/></button>
-                   <button onClick={() => setActiveSidebar(activeSidebar === 'history' ? null : 'history')} className={`w-11 h-11 rounded-[14px] flex items-center justify-center transition-colors ${activeSidebar === 'history' ? 'bg-indigo-50 text-indigo-600 border border-indigo-100/50 shadow-sm' : 'text-gray-400 hover:text-indigo-600 hover:bg-gray-50'}`} title="生成历史"><RefreshCw size={22} strokeWidth={1.5}/></button>
+                   <button onClick={() => setActiveSidebar(activeSidebar === 'history' ? null : 'history')} className={`w-11 h-11 rounded-[14px] flex items-center justify-center transition-colors ${activeSidebar === 'history' ? 'bg-indigo-50 text-indigo-600 border border-indigo-100/50 shadow-sm' : 'text-gray-400 hover:text-indigo-600 hover:bg-gray-50'}`} title="生成历史"><History size={22} strokeWidth={1.5}/></button>
                 </div>
                 <div className="w-8 border-b border-gray-100 my-4"></div>
                 <button onClick={() => setIsTeamModalOpen(true)} className="w-11 h-11 rounded-[14px] flex items-center justify-center text-gray-400 hover:text-indigo-600 hover:bg-gray-50 transition-colors pointer-events-auto" title="团队沟通"><MessageSquare size={22} strokeWidth={1.5}/></button>
@@ -1237,6 +1255,7 @@ export default function App() {
               <span className="text-xs font-bold text-gray-600 w-12 text-center select-none">{Math.round(zoom * 100)}%</span>
               <button onClick={() => { const z = Math.min(5, zoom + 0.15); zoomRef.current = z; setZoom(z); setPan(p => ({ x: p.x, y: p.y })); }} className="w-6 h-6 rounded-full flex items-center justify-center text-gray-400 hover:text-gray-900 hover:bg-gray-100 transition-colors text-sm font-bold">+</button>
             </div>
+
           </React.Fragment>
         )}
 
@@ -1326,6 +1345,23 @@ export default function App() {
         )}
       </div>
 
+      {/* 悬浮 AI 导演触发按钮 */}
+      <div className="absolute top-1/2 -translate-y-1/2 right-4 pointer-events-auto z-[200]">
+        <button
+          onClick={() => setIsAssistantOpen(true)}
+          className="w-12 h-12 rounded-full bg-indigo-600 text-white shadow-lg hover:bg-indigo-700 hover:scale-110 transition-all flex items-center justify-center"
+          title="AI 视觉导演助手"
+        >
+          <Sparkles size={20} />
+        </button>
+      </div>
+
+      {/* AI 视觉导演助手面板 */}
+      <VideoStudioAssistant isOpen={isAssistantOpen} onClose={() => setIsAssistantOpen(false)} onDeploy={handleDeploy} workerUrl={WORKER_URL} />
+
+      {/* 充值算力面板 */}
+      <PricingModal isOpen={isPricingOpen} onClose={() => setIsPricingOpen(false)} />
+
       {/* -------------------------------------
           层级 4: 全局顶级导航栏 (Header)
       ------------------------------------- */}
@@ -1360,10 +1396,10 @@ export default function App() {
         
         {/* Header Right */}
         <div className="flex items-center space-x-3 pointer-events-auto">
-          <div className="flex items-center space-x-2 bg-white/90 backdrop-blur-md border border-gray-200/80 rounded-full px-3 py-1.5 shadow-sm cursor-pointer hover:bg-gray-50 transition-colors">
+          <button onClick={() => setIsPricingOpen(true)} className="flex items-center space-x-2 bg-white/90 backdrop-blur-md border border-gray-200/80 rounded-full px-3 py-1.5 shadow-sm cursor-pointer hover:bg-gray-50 transition-colors">
             <Zap size={14} className="text-indigo-500" strokeWidth={1.5} />
             <span className="text-xs font-mono font-bold text-gray-700">{credits.toLocaleString()}</span>
-          </div>
+          </button>
           <button onClick={() => setIsTeamModalOpen(true)} className="flex items-center space-x-2 bg-white/90 backdrop-blur-md border border-gray-200/80 rounded-full px-4 py-1.5 shadow-sm hover:bg-gray-50 hover:text-indigo-600 transition-colors group">
             <Users size={14} className="text-gray-500 group-hover:text-indigo-600 transition-colors" strokeWidth={1.5} />
             <span className="text-xs font-medium text-gray-700 group-hover:text-indigo-600 transition-colors">团队协作</span>
@@ -1390,13 +1426,13 @@ export default function App() {
                   <p className="text-[10px] text-gray-500 mt-0.5">li.director@studio.com</p>
                   <span className="inline-block mt-1.5 text-[9px] font-bold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded-full border border-indigo-100">Pro 创作者</span>
                 </div>
-                <div className="mt-3 p-2.5 bg-white border border-gray-200 rounded-xl flex items-center justify-between">
+                <button onClick={() => setIsPricingOpen(true)} className="mt-3 p-2.5 bg-white border border-gray-200 rounded-xl flex items-center justify-between w-full hover:border-indigo-300 hover:bg-indigo-50/30 transition-colors cursor-pointer">
                   <div className="flex items-center space-x-2">
                     <Coins size={15} className="text-amber-500" />
                     <span className="text-[12px] font-mono font-bold text-gray-900">{credits.toLocaleString()}</span>
                   </div>
                   <span className="text-[9px] text-gray-400">积分</span>
-                </div>
+                </button>
               </div>
 
               {/* 菜单 */}
@@ -1489,23 +1525,23 @@ export default function App() {
                     <div className="bg-gradient-to-br from-amber-50 to-orange-50 border border-amber-200 rounded-2xl p-6 text-center">
                       <p className="text-[11px] font-bold text-amber-600 uppercase tracking-wider mb-2">当前积分</p>
                       <p className="text-5xl font-mono font-bold text-gray-900">{credits.toLocaleString()}</p>
-                      <p className="text-[12px] text-gray-500 mt-2">≈ ¥{(credits / 100).toFixed(2)}</p>
                     </div>
                     <div>
                       <p className="text-[12px] font-bold text-gray-500 uppercase tracking-wider mb-3">快速充值</p>
                       <div className="grid grid-cols-2 gap-3">
                         {[
-                          { pts: 500, price: '¥5.00', popular: false },
-                          { pts: 2000, price: '¥18.00', popular: true },
-                          { pts: 5000, price: '¥40.00', popular: false },
-                          { pts: 20000, price: '¥150.00', popular: false },
+                          { pts: '450', price: '¥9.90', badge: null, sku: 'Basic' },
+                          { pts: '1,500', price: '¥29.00', badge: '推荐', sku: 'Pro' },
+                          { pts: '3,800', price: '¥68.00', badge: null, sku: 'Premium' },
+                          { pts: '10,800', price: '¥168.00', badge: null, sku: 'Max' },
                         ].map(pkg => (
-                          <button key={pkg.pts} onClick={() => showMessage(`正在跳转支付: ${pkg.price} → ${pkg.pts} 积分`, "success")} className={`p-4 rounded-2xl border-2 transition-all text-left ${pkg.popular ? 'border-indigo-400 bg-indigo-50/30 hover:bg-indigo-100/40 shadow-md shadow-indigo-100' : 'border-gray-200 bg-white hover:border-gray-300 hover:bg-gray-50'}`}>
-                            <div className="flex items-center justify-between mb-1">
-                              <span className="text-[14px] font-bold text-gray-800">{pkg.pts.toLocaleString()}</span>
-                              {pkg.popular && <span className="text-[9px] font-bold bg-indigo-500 text-white px-1.5 py-0.5 rounded-full">推荐</span>}
-                            </div>
-                            <span className="text-[12px] font-bold text-gray-500">{pkg.price}</span>
+                          <button key={pkg.pts} onClick={() => showMessage(`正在跳转支付: ${pkg.price} → ${pkg.pts} 积分`, "success")} className={`relative p-4 rounded-2xl border transition-all text-left hover:shadow-md ${pkg.badge ? 'border-indigo-200 bg-indigo-50/30 hover:border-indigo-300' : 'border-gray-200 bg-white hover:border-gray-300 hover:bg-gray-50'}`}>
+                            {pkg.badge && (
+                              <div className="absolute -top-1.5 right-3 bg-indigo-600 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full shadow-sm">{pkg.badge}</div>
+                            )}
+                            <div className="text-[22px] font-extrabold text-gray-900 mb-0.5">{pkg.pts}</div>
+                            <p className="text-[10px] font-bold text-gray-500 mb-2">{pkg.sku}</p>
+                            <span className="text-[12px] font-bold text-gray-400">{pkg.price}</span>
                           </button>
                         ))}
                       </div>
