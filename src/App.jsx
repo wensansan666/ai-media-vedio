@@ -1261,21 +1261,14 @@ export default function App() {
               <button onClick={resetView} className="w-7 h-7 rounded-full flex items-center justify-center text-gray-400 hover:text-gray-900 hover:bg-gray-100 transition-colors"><Home size={14}/></button>
             </div>
 
-            {/* 右侧缩放滑条（Figma 风格） */}
+            {/* 右侧纵向滚轮（上下滚动画布） */}
             <div className="absolute top-1/4 bottom-1/4 right-3 w-1 bg-gray-200 rounded-full pointer-events-auto z-[100]">
               <input
                 type="range"
-                min="10" max="500" value={Math.round(zoom * 100)}
+                min="-5000" max="5000" value={-pan.y}
                 onChange={(e) => {
-                  const newZoom = Number(e.target.value) / 100;
-                  const cx = window.innerWidth / 2;
-                  const cy = window.innerHeight / 2;
-                  panRef.current = {
-                    x: cx - (cx - panRef.current.x) * (newZoom / zoomRef.current),
-                    y: cy - (cy - panRef.current.y) * (newZoom / zoomRef.current),
-                  };
-                  zoomRef.current = newZoom;
-                  setZoom(newZoom);
+                  const newY = -Number(e.target.value);
+                  panRef.current = { x: panRef.current.x, y: newY };
                   setPan({ ...panRef.current });
                 }}
                 className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
@@ -1284,7 +1277,7 @@ export default function App() {
               {/* 滑块指示器 */}
               <div
                 className="absolute left-1/2 -translate-x-1/2 w-3 h-3 bg-indigo-500 rounded-full shadow-md pointer-events-none transition-all"
-                style={{ top: `${((zoom - 0.1) / 4.9) * 100}%` }}
+                style={{ top: `${((pan.y + 5000) / 10000) * 100}%` }}
               />
             </div>
 
