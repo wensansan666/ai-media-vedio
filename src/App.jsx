@@ -35,7 +35,7 @@ const FloatingTextToolbar = () => (
 );
 
 const FloatingImageToolbar = ({ status }) => (
-  <div onMouseDown={(e) => e.stopPropagation()} className="absolute -top-16 left-1/2 -translate-x-1/2 bg-white border border-gray-200 rounded-xl px-4 py-2 flex items-center space-x-4 shadow-lg z-30 animate-fade-in-down cursor-auto whitespace-nowrap pointer-events-auto">
+  <div onMouseDown={(e) => e.stopPropagation()} className="absolute -top-14 left-1/2 -translate-x-1/2 bg-white border border-gray-200 rounded-full px-4 py-2 flex items-center space-x-3 shadow-lg z-30 animate-fade-in-down cursor-auto whitespace-nowrap pointer-events-auto">
     <button className="flex items-center space-x-1.5 text-xs font-medium text-gray-600 hover:text-gray-900 transition-colors group">
       <Layout size={14} className="text-gray-400 group-hover:text-indigo-500 transition-colors" />
       <span>全景</span>
@@ -216,9 +216,7 @@ export default function App() {
   const startNodePosRef = useRef({ startX: 0, startY: 0, nodeX: 0, nodeY: 0 });
 
   const [nodes, setNodes] = useState([
-    { id: 'node-1', type: 'text', title: '脚本设定', content: '在一个废弃的火星基地上，一名孤独的侦探正在检查闪烁的全息投影，镜头缓慢推近...', status: 'idle', x: 100, y: 100, parentId: null },
-    { id: 'node-2', type: 'image', title: '视觉参考', content: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1000&auto=format&fit=crop', prompt: '[写实摄影] 孤独侦探背影', status: 'completed', x: 660, y: 130, parentId: 'node-1' },
-    { id: 'node-3', type: 'video', title: '受控视频流', content: 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?q=80&w=1000', prompt: '缓慢推镜头，光影闪烁', status: 'completed', x: 1220, y: 130, parentId: 'node-2' }
+    { id: 'node-1', type: 'text', title: '脚本设定', content: '', status: 'idle', x: 100, y: 100, parentId: null },
   ]);
   const nodesRef = useRef(nodes); 
   useEffect(() => { nodesRef.current = nodes; }, [nodes]);
@@ -323,7 +321,9 @@ export default function App() {
   };
 
   const handleNodeMouseDown = (e, id) => {
-    e.stopPropagation(); 
+    // 如果点在输入框内，不触发拖拽
+    if (e.target.tagName === 'TEXTAREA' || e.target.tagName === 'INPUT') return;
+    e.stopPropagation();
     setActiveNode(id);
     closeAllMenus();
     draggingNodeRef.current = id; setDraggingNodeId(id);
@@ -616,7 +616,7 @@ export default function App() {
               </div>
 
               {/* 连线 SVG */}
-              <svg className="absolute pointer-events-none overflow-visible" style={{ left: -10000, top: -10000, width: 20000, height: 20000 }}>
+              <svg className="absolute pointer-events-none overflow-visible" style={{ left: 0, top: 0, width: 20000, height: 20000 }}>
                 {nodes.map((node) => {
                   if (!node.parentId) return null;
                   const prevNode = nodes.find(n => n.id === node.parentId);
@@ -647,7 +647,7 @@ export default function App() {
               {nodes.map((node) => {
                 const isDraggingThis = draggingNodeId === node.id;
                 const isActive = activeNode === node.id;
-                let scale = 1; if (isDraggingThis) scale = 1.03; else if (isActive) scale = 1.02;
+                let scale = 1; if (isDraggingThis) scale = 1.03;
 
                 const isMediaNode = node.type === 'image' || node.type === 'video';
                 const isAudioNode = node.type === 'audio';
@@ -686,8 +686,8 @@ export default function App() {
                     {/* 节点内容 */}
                     <div className="flex-1 w-full h-full p-8 relative overflow-hidden flex flex-col">
                       {node.type === 'text' && (
-                        <div className="flex flex-col h-full w-full">
-                          <textarea onMouseDown={(e) => e.stopPropagation()} value={node.content || ''} onChange={(e) => { const val = e.target.value; setNodes(prev => prev.map(n => n.id === node.id ? { ...n, content: val } : n)); }} className="flex-1 w-full bg-transparent text-gray-800 text-[16px] leading-relaxed resize-none focus:outline-none placeholder-gray-300 custom-scrollbar font-medium cursor-text min-h-[220px]" placeholder="在这里输入您的创意脚本或描述..." />
+                        <div className="flex flex-col h-full w-full relative">
+                          <textarea readOnly value={node.content || ''} className="flex-1 w-full bg-transparent text-gray-800 text-[16px] leading-relaxed resize-none focus:outline-none placeholder-gray-300 custom-scrollbar font-medium cursor-default min-h-[220px]" placeholder="输入提示词后点生成，AI 自动填充内容..." />
                           
                           <div className="mt-2 mb-3 flex flex-col" onMouseDown={(e) => e.stopPropagation()}>
                             <div className="flex items-center text-[12px] font-bold text-indigo-500 mb-2.5"><Star size={14} className="mr-1.5" /><span>画面风格</span></div>
@@ -827,7 +827,19 @@ export default function App() {
                           </div>
                         )}
 
-                        <textarea value={prompt} onChange={(e) => setPrompt(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleGenerate(); } }} placeholder={node.type === 'video' ? "描述任何你想要生成的内容..." : (node.type === 'text' ? "补充附加指令..." : "输入画面或运动描述指令...")} className="w-full bg-transparent text-gray-900 placeholder-gray-400 text-[15px] p-2 resize-none focus:outline-none custom-scrollbar font-medium" rows={2} style={{ minHeight: '52px', maxHeight: '140px' }} />
+                        <div className="flex items-start space-x-2">
+                          {node.type !== 'video' && (
+                          <button
+                            onMouseDown={(e) => e.stopPropagation()}
+                            onClick={() => showMessage("上传功能准备中...", "info")}
+                            className="mt-1 w-9 h-9 rounded-xl border-2 border-dashed border-gray-300 hover:border-indigo-400 bg-gray-50/50 hover:bg-indigo-50/50 flex items-center justify-center text-gray-400 hover:text-indigo-500 transition-all shrink-0 group/upload"
+                            title="上传参考图片/视频/音频"
+                          >
+                            <Plus size={17} strokeWidth={2} className="group-hover/upload:scale-110 transition-transform" />
+                          </button>
+                          )}
+                          <textarea value={prompt} onChange={(e) => setPrompt(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleGenerate(); } }} placeholder={node.type === 'video' ? "描述任何你想要生成的内容..." : (node.type === 'text' ? "补充附加指令..." : "输入画面或运动描述指令...")} className="w-full bg-transparent text-gray-900 placeholder-gray-400 text-[15px] p-2 resize-none focus:outline-none custom-scrollbar font-medium" rows={2} style={{ minHeight: '52px', maxHeight: '140px' }} />
+                        </div>
                         
                         <div className="flex items-center justify-between mt-3 pt-3 border-t border-gray-100">
                           <div className="flex-1 pr-3">
@@ -1247,6 +1259,33 @@ export default function App() {
               <button onClick={handleAutoGroup} className="flex items-center space-x-1.5 px-3 py-1.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-600 rounded-full transition-colors font-bold text-xs"><BoxSelect size={14} strokeWidth={2} /><span>框选编组</span></button>
               <div className="w-px h-4 bg-gray-200 mx-1"></div>
               <button onClick={resetView} className="w-7 h-7 rounded-full flex items-center justify-center text-gray-400 hover:text-gray-900 hover:bg-gray-100 transition-colors"><Home size={14}/></button>
+            </div>
+
+            {/* 右侧缩放滑条（Figma 风格） */}
+            <div className="absolute top-1/4 bottom-1/4 right-3 w-1 bg-gray-200 rounded-full pointer-events-auto z-[100]">
+              <input
+                type="range"
+                min="10" max="500" value={Math.round(zoom * 100)}
+                onChange={(e) => {
+                  const newZoom = Number(e.target.value) / 100;
+                  const cx = window.innerWidth / 2;
+                  const cy = window.innerHeight / 2;
+                  panRef.current = {
+                    x: cx - (cx - panRef.current.x) * (newZoom / zoomRef.current),
+                    y: cy - (cy - panRef.current.y) * (newZoom / zoomRef.current),
+                  };
+                  zoomRef.current = newZoom;
+                  setZoom(newZoom);
+                  setPan({ ...panRef.current });
+                }}
+                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                style={{ writingMode: 'vertical-lr', direction: 'rtl', WebkitAppearance: 'slider-vertical' }}
+              />
+              {/* 滑块指示器 */}
+              <div
+                className="absolute left-1/2 -translate-x-1/2 w-3 h-3 bg-indigo-500 rounded-full shadow-md pointer-events-none transition-all"
+                style={{ top: `${((zoom - 0.1) / 4.9) * 100}%` }}
+              />
             </div>
 
             {/* 右下角缩放指示器 */}
