@@ -3,7 +3,20 @@
     "allow": [
       "WebSearch",
       "Bash(E:/Nodejs/node \"e:/3Agent/vscode/projects/多模态视频demo/node_modules/vite/bin/vite.js\" build)",
-      "WebFetch(domain:discuss.ai.google.dev)"
+      "WebFetch(domain:discuss.ai.google.dev)",
+      "Bash(E:/Nodejs/node -e \"fetch\\('https://ai-media-vedio-api.wensansan.workers.dev/api/text',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify\\({prompt:'你好',actionType:'expand'}\\)}\\).then\\(r=>r.json\\(\\)\\).then\\(d=>console.log\\('TEXT:',d.success?'OK, len='+d.text?.length:'FAIL: '+d.error\\)\\).catch\\(e=>console.log\\('NET:',e.message\\)\\)\")",
+      "Bash(E:/Nodejs/node -e \"fetch\\('https://ai-media-vedio-api.wensansan.workers.dev/api/text',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify\\({prompt:'你好，简单介绍一下自己',actionType:'expand'}\\)}\\).then\\(r=>r.json\\(\\)\\).then\\(d=>console.log\\(d.success?'OK: '+d.text?.slice\\(0,200\\):'FAIL: '+d.error\\)\\).catch\\(e=>console.log\\('NET:',e.message\\)\\)\")",
+      "Bash(E:/Nodejs/node -e \"fetch\\('https://ai-media-vedio-api.wensansan.workers.dev/api/text',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify\\({prompt:'写一句简短的镜头描述',actionType:'expand'}\\)}\\).then\\(r=>r.json\\(\\)\\).then\\(d=>console.log\\(JSON.stringify\\(d,null,2\\)\\)\\).catch\\(e=>console.log\\('ERR:',e.message\\)\\)\")",
+      "PowerShell(Remove-Item \"$env:USERPROFILE\\\\Desktop\\\\Codex.lnk\" -Force -ErrorAction SilentlyContinue; $WshShell = New-Object -ComObject WScript.Shell; $Shortcut = $WshShell.CreateShortcut\\(\"$env:USERPROFILE\\\\Desktop\\\\Codex.lnk\"\\); $Shortcut.TargetPath = \"C:\\\\Windows\\\\explorer.exe\"; $Shortcut.Arguments = \"shell:AppsFolder\\\\OpenAI.Codex_2p2nqsd0c76g0!App\"; $Shortcut.IconLocation = \"%SystemRoot%\\\\System32\\\\SHELL32.dll,135\"; $Shortcut.Save\\(\\); Write-Host \"Done - using shell32.dll icon 135 \\(application icon\\)\")",
+      "PowerShell($link = \"e:\\\\3Agent\\\\codex\\\\codex_icon.png\"; Add-Type -AssemblyName System.Drawing; $bmp = [System.Drawing.Image]::FromFile\\($link\\); $icoPath = \"e:\\\\3Agent\\\\codex\\\\codex_icon.ico\"; $icon = [System.Drawing.Icon]::FromHandle\\(\\(New-Object System.Drawing.Bitmap\\($bmp\\)\\).GetHicon\\(\\)\\); $fs = [System.IO.File]::OpenWrite\\($icoPath\\); $icon.Save\\($fs\\); $fs.Close\\(\\); $icon.Dispose\\(\\); $bmp.Dispose\\(\\); if \\(Test-Path $icoPath\\) { Write-Host \"ICO created! Size: $\\(\\(Get-Item $icoPath\\).Length\\) bytes\" })",
+      "Bash(cd \"e:/3Agent/vscode/projects/多模态视频demo\")",
+      "Bash(E:/3Agent/Python/vscode/anzhuang/Git/Git/cmd/git add *)",
+      "Bash(E:/3Agent/Python/vscode/anzhuang/Git/Git/cmd/git commit *)",
+      "Bash(E:/3Agent/Python/vscode/anzhuang/Git/Git/cmd/git tag *)",
+      "Bash(E:/3Agent/Python/vscode/anzhuang/Git/Git/cmd/git push *)"
     ]
-  }
+  },
+  "model": "opus",
+  "fastMode": true,
+  "autoCompactEnabled": true
 }

@@ -109,6 +109,14 @@ const MOCK_ASSETS = [
 // ==========================================
 const WORKER_URL = 'https://ai-media-vedio-api.wensansan.workers.dev';
 
+const EXAMPLE_SCRIPT = `【赛博侦探 · 火星基地】
+
+镜头1：航拍，黎明时分，废弃的火星基地笼罩在薄雾中，远处的地平线泛起橙红色光芒。
+
+镜头2：推镜头，一名孤独的侦探站在控制室中央，全息投影在面前闪烁，映照出他疲惫而坚定的面容。
+
+镜头3：特写，他伸手触碰投影中的加密文件，手指穿过光影的瞬间，真相浮出水面。`;
+
 // ==========================================
 // 主应用组件
 // ==========================================
@@ -376,10 +384,11 @@ export default function App() {
   };
 
   const callWorker = async (type, payload) => {
-    const resp = await fetch(WORKER_URL, {
+    const endpoint = type === 'image' ? '/api/image' : '/api/text';
+    const resp = await fetch(WORKER_URL + endpoint, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ type, ...payload }),
+      body: JSON.stringify(payload),
     });
     return resp.json();
   };
@@ -454,7 +463,8 @@ export default function App() {
 
   const handleAITextAction = async (nodeId, actionType) => {
     const node = nodes.find(n => n.id === nodeId);
-    if (!node?.content) return;
+    const inputText = node?.content?.trim() || prompt.trim();
+    if (!inputText) { showMessage("请先在输入框输入内容", "error"); return; }
     showMessage(`正在调用 AI ${actionType}...`, "info");
 
     const actionMap = {
@@ -465,7 +475,7 @@ export default function App() {
 
     try {
       const result = await callWorker('text', {
-        prompt: node.content,
+        prompt: inputText,
         actionType: actionMap[actionType] || 'expand'
       });
       if (result.success) {
@@ -687,8 +697,28 @@ export default function App() {
                     <div className="flex-1 w-full h-full p-8 relative overflow-hidden flex flex-col">
                       {node.type === 'text' && (
                         <div className="flex flex-col h-full w-full relative">
-                          <textarea readOnly value={node.content || ''} className="flex-1 w-full bg-transparent text-gray-800 text-[16px] leading-relaxed resize-none focus:outline-none placeholder-gray-300 custom-scrollbar font-medium cursor-default min-h-[220px]" placeholder="输入提示词后点生成，AI 自动填充内容..." />
-                          
+                          {/* 示例引导层 */}
+                          {!node.content && !prompt && (
+                            <div className="flex-1 flex flex-col justify-center pointer-events-none animate-fade-in">
+                              <p className="text-[13px] text-gray-300 leading-relaxed whitespace-pre-line mb-4">{EXAMPLE_SCRIPT}</p>
+                              <button
+                                onMouseDown={(e) => e.stopPropagation()}
+                                onClick={(e) => { e.stopPropagation(); setPrompt(EXAMPLE_SCRIPT); }}
+                                className="pointer-events-auto text-[12px] font-bold text-indigo-500 hover:text-indigo-700 bg-indigo-50 hover:bg-indigo-100 px-4 py-2 rounded-xl transition-colors w-fit"
+                              >✨ 使用此示例</button>
+                            </div>
+                          )}
+                          {/* 正常内容 */}
+                          {node.content && (
+                            <textarea readOnly value={node.content} className="flex-1 w-full bg-transparent text-gray-800 text-[16px] leading-relaxed resize-none focus:outline-none custom-scrollbar font-medium cursor-default min-h-[100px]" />
+                          )}
+                          {/* 正在输入引导时显示提示 */}
+                          {!node.content && prompt && (
+                            <div className="flex-1 flex items-center justify-center">
+                              <p className="text-[13px] text-gray-300">在下方输入描述后将自动生成内容...</p>
+                            </div>
+                          )}
+
                           <div className="mt-2 mb-3 flex flex-col" onMouseDown={(e) => e.stopPropagation()}>
                             <div className="flex items-center text-[12px] font-bold text-indigo-500 mb-2.5"><Star size={14} className="mr-1.5" /><span>画面风格</span></div>
                             <div className="flex flex-wrap gap-2">
@@ -764,7 +794,7 @@ export default function App() {
                         </div>
                       )}
                       
-                      {node.status === 'completed' && (
+                      {node.status === 'completed' && node.type !== 'text' && (
                         <div className="absolute inset-0 bg-gray-100 group/result overflow-hidden" style={{ borderRadius: 'calc(1.5rem - 2px)' }}>
                           <img draggable={false} src={node.content} alt="Result" className="w-full h-full object-cover select-none" />
                         </div>
@@ -838,7 +868,7 @@ export default function App() {
                             <Plus size={17} strokeWidth={2} className="group-hover/upload:scale-110 transition-transform" />
                           </button>
                           )}
-                          <textarea value={prompt} onChange={(e) => setPrompt(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleGenerate(); } }} placeholder={node.type === 'video' ? "描述任何你想要生成的内容..." : (node.type === 'text' ? "补充附加指令..." : "输入画面或运动描述指令...")} className="w-full bg-transparent text-gray-900 placeholder-gray-400 text-[15px] p-2 resize-none focus:outline-none custom-scrollbar font-medium" rows={2} style={{ minHeight: '52px', maxHeight: '140px' }} />
+                          <textarea value={prompt} onChange={(e) => setPrompt(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleGenerate(); } }} placeholder="输入你想要生成的内容描述..." className="w-full bg-transparent text-gray-900 placeholder-gray-400 text-[15px] p-2 resize-none focus:outline-none custom-scrollbar font-medium" rows={2} style={{ minHeight: '52px', maxHeight: '140px' }} />
                         </div>
                         
                         <div className="flex items-center justify-between mt-3 pt-3 border-t border-gray-100">
@@ -1266,13 +1296,13 @@ export default function App() {
               <input
                 type="range"
                 min="-5000" max="5000" value={-pan.y}
-                onChange={(e) => {
+                onInput={(e) => {
                   const newY = -Number(e.target.value);
                   panRef.current = { x: panRef.current.x, y: newY };
                   setPan({ ...panRef.current });
                 }}
                 className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                style={{ writingMode: 'vertical-lr', direction: 'rtl', WebkitAppearance: 'slider-vertical' }}
+                style={{ writingMode: 'vertical-lr', direction: 'rtl', appearance: 'none' }}
               />
               {/* 滑块指示器 */}
               <div
