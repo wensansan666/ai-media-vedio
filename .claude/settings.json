@@ -13,7 +13,8 @@
       "Bash(E:/3Agent/Python/vscode/anzhuang/Git/Git/cmd/git add *)",
       "Bash(E:/3Agent/Python/vscode/anzhuang/Git/Git/cmd/git commit *)",
       "Bash(E:/3Agent/Python/vscode/anzhuang/Git/Git/cmd/git tag *)",
-      "Bash(E:/3Agent/Python/vscode/anzhuang/Git/Git/cmd/git push *)"
+      "Bash(E:/3Agent/Python/vscode/anzhuang/Git/Git/cmd/git push *)",
+      "PowerShell(Set-Location \"e:\\\\3Agent\\\\vscode\\\\projects\\\\多模态视频demo\"; git ls-files --others --exclude-standard | ForEach-Object { Write-Host $_ })"
     ]
   },
   "model": "opus",
