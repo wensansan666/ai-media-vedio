@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import {
-  Plus, ChevronDown, ArrowUp, X, Zap, Eraser, Box, Image, PlaySquare, Hexagon
+  Plus, ChevronDown, ArrowUp, X, Zap, Eraser, Box, Image, PlaySquare, Hexagon,
+  Sparkles, Search, Clapperboard, Activity
 } from 'lucide-react';
 
 // ==========================================
@@ -160,31 +161,56 @@ export default function VideoStudioAssistant({ isOpen, onClose, onDeploy, worker
   // ==========================================
   return (
     <>
-      <div className={`fixed top-0 right-0 w-[400px] bg-white h-full border-l border-gray-100 flex flex-col transition-transform duration-300 z-[5000] shadow-[-10px_0_40px_rgba(0,0,0,0.03)] ${isOpen ? 'translate-x-0' : 'translate-x-full'}`}>
+      <div className={`fixed top-0 right-0 w-[440px] bg-[#F4F6FB] h-full border-l border-slate-200/80 flex flex-col transition-transform duration-300 z-[5000] shadow-[-30px_0_90px_rgba(15,23,42,0.16)] ${isOpen ? 'translate-x-0' : 'translate-x-full'}`}>
 
         {/* ---------- 7a. 顶部 ---------- */}
-        <div className="h-16 px-5 flex items-center justify-between shrink-0 bg-white border-b border-gray-50">
+        <div className="px-5 pt-5 pb-6 flex items-start justify-between shrink-0 bg-white/95 text-slate-900 border-b border-slate-200/80 backdrop-blur-xl relative overflow-hidden">
+          <div className="absolute -top-16 -right-12 w-40 h-40 rounded-full bg-indigo-100/80 blur-3xl pointer-events-none" />
           <div className="flex items-center space-x-2.5">
-            <span className="text-[14px] font-bold text-gray-900 tracking-wide">🎬 TVC视觉导演</span>
-            <div className="flex items-center space-x-1.5 bg-green-50 px-2 py-0.5 rounded-full border border-green-100/30">
-              <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>
-              <span className="text-[10px] text-green-700 font-medium tracking-wide">正在待命</span>
+            <div className="w-10 h-10 rounded-[15px] bg-gradient-to-br from-indigo-400 to-violet-600 text-white flex items-center justify-center shadow-[0_10px_30px_rgba(99,102,241,0.42)]"><Clapperboard size={19} /></div>
+            <div>
+              <div className="flex items-center gap-2"><div className="text-[15px] font-extrabold tracking-wide text-slate-900">AI Director</div><span className="px-1.5 py-0.5 rounded-md bg-indigo-50 border border-indigo-100 text-[9px] font-bold text-indigo-600">BETA</span></div>
+              <div className="text-[11px] text-slate-400 font-medium mt-1">你的分镜、画面与视频创意工作台</div>
             </div>
           </div>
           <div className="flex items-center space-x-2">
             <button onClick={() => setMessages([{ id: 'm1', role: 'ai', type: 'text', content: '上下文已清空。' }])}
-              className="p-1.5 text-gray-400 hover:text-gray-900 hover:bg-gray-50 rounded-md transition-colors" title="清空对话">
+              className="p-2 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-xl transition-colors" title="清空对话">
               <Eraser size={15} strokeWidth={2}/>
             </button>
             <button onClick={onClose}
-              className="p-1.5 text-gray-400 hover:text-gray-900 hover:bg-gray-50 rounded-md transition-colors" title="收起面板">
+              className="p-2 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-xl transition-colors" title="收起面板">
               <X size={18} strokeWidth={2}/>
             </button>
           </div>
         </div>
 
+        {/* AI 导演快捷工作台 */}
+        <div className="px-5 -mt-3 relative z-10 shrink-0">
+          <div className="bg-white border border-slate-200/80 rounded-[22px] p-3.5 shadow-[0_18px_45px_rgba(15,23,42,0.10)]">
+            <div className="flex items-center justify-between px-1 mb-3">
+              <div className="flex items-center gap-2"><Activity size={13} className="text-indigo-600"/><span className="text-[11px] font-extrabold text-slate-800 tracking-wide">快捷创作</span></div>
+              <span className="flex items-center gap-1.5 text-[10px] font-semibold text-emerald-600"><span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"/>系统在线</span>
+            </div>
+            <div className="grid grid-cols-3 gap-2">
+              <button onClick={() => handleQuickAction('topic')} className="director-action-card group">
+                <span className="director-action-icon bg-indigo-50 text-indigo-600"><Sparkles size={15}/></span>
+                <span>推荐选题</span>
+              </button>
+              <button onClick={() => handleQuickAction('reference')} className="director-action-card group">
+                <span className="director-action-icon bg-sky-50 text-sky-600"><Search size={15}/></span>
+                <span>画面参考</span>
+              </button>
+              <button onClick={() => handleQuickAction('opening')} className="director-action-card group">
+                <span className="director-action-icon bg-violet-50 text-violet-600"><Clapperboard size={15}/></span>
+                <span>视频开场</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
         {/* ---------- 7b. 聊天瀑布流 ---------- */}
-        <div className="flex-1 overflow-y-auto px-5 py-2 space-y-6 custom-scrollbar bg-white">
+        <div className="flex-1 overflow-y-auto px-5 py-5 space-y-5 custom-scrollbar bg-[#F4F6FB]">
           {messages.map(msg => (
             <div key={msg.id} className={`flex w-full ${msg.role === 'user' ? 'justify-end' : 'justify-start'} animate-fade-in`}>
               <div className={`max-w-[95%] flex flex-col ${msg.role === 'user' ? 'items-end' : 'items-start'}`}>
@@ -199,8 +225,8 @@ export default function VideoStudioAssistant({ isOpen, onClose, onDeploy, worker
                 ) : (
                   /* 文本消息 → 气泡 */
                   <div className={`text-[13px] leading-relaxed font-medium ${msg.role === 'user'
-                    ? 'bg-[#FAFAFA] border border-gray-100 text-gray-800 px-4 py-2.5 rounded-[20px] rounded-tr-sm shadow-sm'
-                    : 'text-gray-800 whitespace-pre-wrap'}`}>
+                    ? 'bg-indigo-600 border border-indigo-600 text-white px-4 py-3 rounded-[18px] rounded-tr-sm shadow-[0_8px_22px_rgba(79,70,229,0.22)]'
+                    : 'bg-white border border-slate-200/80 text-slate-700 whitespace-pre-wrap px-4 py-3.5 rounded-[18px] rounded-tl-sm shadow-[0_8px_24px_rgba(15,23,42,0.06)]'}`}>
                     {msg.content}
                   </div>
                 )}
@@ -239,30 +265,14 @@ export default function VideoStudioAssistant({ isOpen, onClose, onDeploy, worker
           <div ref={chatEndRef} />
         </div>
 
-        {/* ---------- 7c. 3 个快捷按钮 ---------- */}
-        <div className="px-5 pb-2 flex gap-2 flex-wrap">
-          <button onClick={() => handleQuickAction('topic')}
-            className="text-[11px] font-medium text-gray-500 bg-gray-50 hover:bg-indigo-50 hover:text-indigo-600 border border-gray-100 hover:border-indigo-200 px-3 py-1.5 rounded-full transition-colors">
-            推荐短片选题
-          </button>
-          <button onClick={() => handleQuickAction('reference')}
-            className="text-[11px] font-medium text-gray-500 bg-gray-50 hover:bg-indigo-50 hover:text-indigo-600 border border-gray-100 hover:border-indigo-200 px-3 py-1.5 rounded-full transition-colors">
-            查找画面参考
-          </button>
-          <button onClick={() => handleQuickAction('opening')}
-            className="text-[11px] font-medium text-gray-500 bg-gray-50 hover:bg-indigo-50 hover:text-indigo-600 border border-gray-100 hover:border-indigo-200 px-3 py-1.5 rounded-full transition-colors">
-            创作视频开场白
-          </button>
-        </div>
-
         {/* ---------- 7d. 底部输入栏 ---------- */}
-        <div className="p-5 bg-white shrink-0">
-          <div className="bg-white border border-gray-200 rounded-[20px] p-2.5 flex flex-col shadow-[0_2px_15px_rgba(0,0,0,0.03)] focus-within:border-gray-300 transition-all">
+        <div className="p-5 pt-2 bg-[#F4F6FB] shrink-0">
+          <div className="bg-white border border-slate-200 rounded-[22px] p-3 flex flex-col shadow-[0_18px_45px_rgba(15,23,42,0.10)] focus-within:border-indigo-300 focus-within:ring-4 focus-within:ring-indigo-100/60 transition-all">
             {/* 输入框 */}
             <div className="w-full relative">
               <textarea value={chatInput} onChange={e => setChatInput(e.target.value)}
                 onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSend(); } }}
-                className="w-full bg-transparent border-none outline-none text-[14px] text-gray-800 font-medium px-1.5 py-1.5 resize-none min-h-[44px] max-h-[120px] custom-scrollbar leading-relaxed"
+                className="w-full bg-transparent border-none outline-none text-[14px] text-slate-800 font-medium px-2 py-2 resize-none min-h-[48px] max-h-[120px] custom-scrollbar leading-relaxed placeholder:text-slate-400"
                 placeholder="输入你想要生成的内容描述..."
               />
             </div>
@@ -349,7 +359,7 @@ export default function VideoStudioAssistant({ isOpen, onClose, onDeploy, worker
               <div className="flex items-center space-x-3 mr-1">
                 <span className="text-[11px] font-bold text-gray-400">消耗 <span className="text-indigo-600">2 积分</span></span>
                 <button onClick={handleSend} disabled={!chatInput.trim()}
-                  className={`w-8 h-8 rounded-full flex items-center justify-center transition-all ${!chatInput.trim() ? 'bg-gray-100 text-gray-300 cursor-not-allowed' : 'bg-[#982973] text-white hover:bg-[#7D1E5B] shadow-md hover:-translate-y-0.5'}`}>
+                  className={`w-9 h-9 rounded-xl flex items-center justify-center transition-all ${!chatInput.trim() ? 'bg-slate-100 text-slate-300 cursor-not-allowed' : 'bg-indigo-600 text-white hover:bg-indigo-700 shadow-[0_8px_20px_rgba(79,70,229,0.28)] hover:-translate-y-0.5'}`}>
                   <ArrowUp size={16} strokeWidth={2.5} />
                 </button>
               </div>

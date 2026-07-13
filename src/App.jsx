@@ -18,7 +18,7 @@ import PricingModal from './PricingModal';
 
 // --- 悬浮工具栏组件 ---
 const FloatingTextToolbar = () => (
-  <div onMouseDown={(e) => e.stopPropagation()} className="absolute -top-14 left-1/2 -translate-x-1/2 bg-white border border-gray-200 rounded-full px-4 py-2 flex items-center space-x-4 shadow-lg z-20 animate-fade-in cursor-auto pointer-events-auto">
+  <div onMouseDown={(e) => e.stopPropagation()} className="absolute -top-14 left-1/2 -translate-x-1/2 premium-toolbar rounded-full px-4 py-2 flex items-center space-x-4 z-20 animate-fade-in cursor-auto pointer-events-auto">
     <div className="w-3.5 h-3.5 rounded-full bg-indigo-500 shadow-sm"></div>
     <div className="w-px h-4 bg-gray-200"></div>
     <span className="text-gray-400 text-xs font-mono hover:text-gray-900 cursor-pointer transition-colors">H1</span>
@@ -35,7 +35,7 @@ const FloatingTextToolbar = () => (
 );
 
 const FloatingImageToolbar = ({ status }) => (
-  <div onMouseDown={(e) => e.stopPropagation()} className="absolute -top-14 left-1/2 -translate-x-1/2 bg-white border border-gray-200 rounded-full px-4 py-2 flex items-center space-x-3 shadow-lg z-30 animate-fade-in-down cursor-auto whitespace-nowrap pointer-events-auto">
+  <div onMouseDown={(e) => e.stopPropagation()} className="absolute -top-14 left-1/2 -translate-x-1/2 premium-toolbar rounded-full px-4 py-2 flex items-center space-x-3 z-30 animate-fade-in-down cursor-auto whitespace-nowrap pointer-events-auto">
     <button className="flex items-center space-x-1.5 text-xs font-medium text-gray-600 hover:text-gray-900 transition-colors group">
       <Layout size={14} className="text-gray-400 group-hover:text-indigo-500 transition-colors" />
       <span>全景</span>
@@ -555,7 +555,7 @@ export default function App() {
   // DOM 渲染区域
   // ========================================================
   return (
-    <div className="fixed inset-0 bg-[#F8F9FA] text-gray-900 font-sans overflow-hidden selection:bg-indigo-500/20">
+    <div className="fixed inset-0 bg-[#F4F6FB] text-slate-900 font-sans overflow-hidden selection:bg-indigo-500/20">
       
       {/* -------------------------------------
           第 1 模块: 启动动画 (Z: 9999)
@@ -662,6 +662,9 @@ export default function App() {
                 const isMediaNode = node.type === 'image' || node.type === 'video';
                 const isAudioNode = node.type === 'audio';
                 let currentApi = node.type === 'video' ? videoApiModel : node.type === 'image' ? imageApiModel : node.type === 'audio' ? audioApiModel : textApiModel;
+                const nodeTypeLabel = node.type === 'text' ? '文本脚本' : node.type === 'image' ? '图像生成' : node.type === 'video' ? '视频生成' : '音效配乐';
+                const nodeCost = node.type === 'text' ? 2 : node.type === 'image' ? 10 : node.type === 'video' ? 35 : 6;
+                const nodeStatusLabel = node.status === 'generating' ? '生成中' : node.status === 'completed' ? '已完成' : node.status === 'idle' ? '待编辑' : '待生成';
 
                 const isThisModelDropdownOpen = openModelDropdownId === node.id;
                 const isThisBatchDropdownOpen = openBatchDropdownId === node.id;
@@ -671,11 +674,11 @@ export default function App() {
                   <div 
                     key={node.id} 
                     onMouseDown={(e) => handleNodeMouseDown(e, node.id)}
-                    className={`absolute w-[480px] ${node.type === 'text' ? 'min-h-[540px]' : 'h-[480px]'} flex flex-col cursor-move group/pipeline rounded-[1.5rem] pointer-events-auto ${isActive ? 'border-2 border-gray-900 bg-white' : 'border border-gray-200 bg-white/90 backdrop-blur hover:border-gray-300'}`}
+                    className={`absolute w-[480px] ${node.type === 'text' ? 'min-h-[540px]' : 'h-[480px]'} flex flex-col cursor-move group/pipeline rounded-[1.75rem] pointer-events-auto premium-node transition-colors overflow-visible ${isActive ? 'border border-indigo-300 bg-white ring-4 ring-indigo-100/60' : 'border border-slate-200/80 bg-white/90 backdrop-blur-xl hover:border-indigo-200'}`}
                     style={{ 
                       transform: `translate(${node.x}px, ${node.y}px) scale(${scale})`,
                       transition: isDraggingThis ? 'none' : 'transform 0.2s cubic-bezier(0.2, 0, 0, 1), box-shadow 0.2s',
-                      boxShadow: isDraggingThis ? '0 25px 50px -12px rgba(0, 0, 0, 0.25)' : isActive ? '0 12px 40px rgba(0,0,0,0.08)' : '0 4px 6px -1px rgba(0, 0, 0, 0.05)',
+                      boxShadow: isDraggingThis ? '0 28px 65px -20px rgba(15, 23, 42, 0.35)' : isActive ? '0 24px 70px rgba(15,23,42,0.14)' : undefined,
                       zIndex: isDraggingThis ? 80 : (isActive ? 70 : 50)
                     }}
                   >
@@ -683,9 +686,21 @@ export default function App() {
                     {isActive && node.type === 'image' && <FloatingImageToolbar status={node.status} />}
                     {isActive && node.type === 'text' && <FloatingTextToolbar />}
 
-                    {/* 节点标题 */}
-                    <div className="absolute -top-8 left-0 flex items-center space-x-2 text-gray-400 pointer-events-none">
-                      <div className="w-4 h-px bg-gray-300"></div><span className="text-[11px] uppercase tracking-wider font-mono font-semibold text-gray-500">{node.title}</span>
+                    {/* 产品化节点标题栏 */}
+                    <div className="h-[64px] shrink-0 px-5 flex items-center justify-between border-b border-slate-100 bg-white/95 rounded-t-[1.72rem] relative z-20">
+                      <div className="flex items-center min-w-0">
+                        <div className={`w-9 h-9 rounded-xl flex items-center justify-center mr-3 ${node.type === 'text' ? 'bg-indigo-50 text-indigo-600' : node.type === 'image' ? 'bg-sky-50 text-sky-600' : node.type === 'video' ? 'bg-violet-50 text-violet-600' : 'bg-amber-50 text-amber-600'}`}>
+                          {node.type === 'text' ? <AlignLeft size={17}/> : node.type === 'image' ? <ImageIcon size={17}/> : node.type === 'video' ? <PlaySquare size={17}/> : <AudioWaveform size={17}/>}
+                        </div>
+                        <div className="min-w-0">
+                          <div className="flex items-center gap-2"><span className="text-[13px] font-extrabold text-slate-900 truncate">{node.title}</span><span className="text-[9px] font-bold text-slate-400 bg-slate-50 border border-slate-100 px-1.5 py-0.5 rounded-md">{nodeTypeLabel}</span></div>
+                          <div className="text-[10px] text-slate-400 mt-1 truncate max-w-[210px]">{currentApi}</div>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2 shrink-0">
+                        <span className="flex items-center gap-1 text-[9px] font-bold text-slate-500 bg-slate-50 border border-slate-100 px-2 py-1 rounded-full"><Zap size={10} className="text-indigo-500"/>{nodeCost} 积分</span>
+                        <span className={`flex items-center gap-1.5 text-[9px] font-bold px-2 py-1 rounded-full border ${node.status === 'generating' ? 'text-amber-600 bg-amber-50 border-amber-100' : node.status === 'completed' ? 'text-emerald-600 bg-emerald-50 border-emerald-100' : 'text-slate-500 bg-slate-50 border-slate-100'}`}><span className={`w-1.5 h-1.5 rounded-full ${node.status === 'generating' ? 'bg-amber-500 animate-pulse' : node.status === 'completed' ? 'bg-emerald-500' : 'bg-slate-300'}`}/>{nodeStatusLabel}</span>
+                      </div>
                     </div>
                     
                     {/* 删除按钮 */}
@@ -694,7 +709,7 @@ export default function App() {
                     )}
 
                     {/* 节点内容 */}
-                    <div className="flex-1 w-full h-full p-8 relative overflow-hidden flex flex-col">
+                    <div className="flex-1 w-full h-full p-7 relative overflow-hidden flex flex-col rounded-b-[1.72rem]">
                       {node.type === 'text' && (
                         <div className="flex flex-col h-full w-full relative">
                           {/* 示例引导层 */}
@@ -723,15 +738,15 @@ export default function App() {
                             <div className="flex items-center text-[12px] font-bold text-indigo-500 mb-2.5"><Star size={14} className="mr-1.5" /><span>画面风格</span></div>
                             <div className="flex flex-wrap gap-2">
                               {['写实摄影', '赛博朋克', '极简3D', '水墨国风', '日系动漫', '复古胶片', 'TVC广告'].map(style => (
-                                <button key={style} onClick={() => setSelectedStyle(style)} className={`px-3 py-1.5 rounded-lg text-[12px] font-bold transition-all ${selectedStyle === style ? 'bg-indigo-500 text-white shadow-sm border border-indigo-500' : 'bg-white text-gray-500 border border-gray-100 hover:bg-gray-50'}`}>{style}</button>
+                                <button key={style} onClick={() => setSelectedStyle(style)} className={`canvas-chip ${selectedStyle === style ? 'canvas-chip-active' : ''}`}>{style}</button>
                               ))}
                             </div>
                           </div>
 
                           <div className="flex items-center space-x-2.5 mt-2 pb-4" onMouseDown={(e) => e.stopPropagation()}>
-                             <button onClick={() => handleAITextAction(node.id, '智能扩写大纲')} className="flex items-center px-3 py-2 bg-indigo-50 text-indigo-600 rounded-xl text-[12px] font-bold hover:bg-indigo-100 transition-colors shadow-sm"><Sparkles size={14} className="mr-1.5"/>扩写大纲</button>
-                             <button onClick={() => handleAITextAction(node.id, '提炼英文提示词')} className="flex items-center px-3 py-2 bg-cyan-50 text-cyan-600 rounded-xl text-[12px] font-bold hover:bg-cyan-100 transition-colors shadow-sm"><Aperture size={14} className="mr-1.5"/>转提示词</button>
-                             <button onClick={() => handleAITextAction(node.id, '润色剧本语气')} className="flex items-center px-3 py-2 bg-purple-50 text-purple-600 rounded-xl text-[12px] font-bold hover:bg-purple-100 transition-colors shadow-sm"><AlignLeft size={14} className="mr-1.5"/>润色</button>
+                             <button onClick={() => handleAITextAction(node.id, '智能扩写大纲')} className="soft-action-chip text-indigo-600"><Sparkles size={13}/>扩写大纲</button>
+                             <button onClick={() => handleAITextAction(node.id, '提炼英文提示词')} className="soft-action-chip text-sky-600"><Aperture size={13}/>转提示词</button>
+                             <button onClick={() => handleAITextAction(node.id, '润色剧本语气')} className="soft-action-chip text-violet-600"><AlignLeft size={13}/>润色</button>
                           </div>
 
                           {node.content && node.content.trim().length > 0 && (
@@ -795,7 +810,7 @@ export default function App() {
                       )}
                       
                       {node.status === 'completed' && node.type !== 'text' && (
-                        <div className="absolute inset-0 bg-gray-100 group/result overflow-hidden" style={{ borderRadius: 'calc(1.5rem - 2px)' }}>
+                        <div className="absolute inset-0 bg-gray-100 group/result overflow-hidden rounded-b-[1.72rem]">
                           <img draggable={false} src={node.content} alt="Result" className="w-full h-full object-cover select-none" />
                         </div>
                       )}
@@ -808,7 +823,7 @@ export default function App() {
 
                     {/* 节点控制栏 (底部) */}
                     {isActive && (
-                      <div onMouseDown={(e) => e.stopPropagation()} className="absolute top-[calc(100%+14px)] left-[-2px] w-[480px] bg-white/95 backdrop-blur-xl border border-gray-200/80 rounded-2xl p-4 shadow-2xl flex flex-col cursor-auto animate-slide-up-node z-50 pointer-events-auto">
+                      <div onMouseDown={(e) => e.stopPropagation()} className="absolute top-[calc(100%+14px)] left-[-12px] w-[504px] bg-white/95 backdrop-blur-2xl border border-slate-200/90 rounded-[22px] p-3 shadow-[0_22px_60px_rgba(15,23,42,0.13)] flex flex-col cursor-auto animate-slide-up-node z-50 pointer-events-auto">
                         
                         {node.type === 'video' && (
                           <div className="flex items-center mb-3">
@@ -857,25 +872,25 @@ export default function App() {
                           </div>
                         )}
 
-                        <div className="flex items-start space-x-2">
+                        <div className="flex items-start space-x-2 bg-slate-50/80 border border-slate-200/80 rounded-2xl p-2 focus-within:bg-white focus-within:border-indigo-300 focus-within:ring-4 focus-within:ring-indigo-50 transition-all">
                           {node.type !== 'video' && (
                           <button
                             onMouseDown={(e) => e.stopPropagation()}
                             onClick={() => showMessage("上传功能准备中...", "info")}
-                            className="mt-1 w-9 h-9 rounded-xl border-2 border-dashed border-gray-300 hover:border-indigo-400 bg-gray-50/50 hover:bg-indigo-50/50 flex items-center justify-center text-gray-400 hover:text-indigo-500 transition-all shrink-0 group/upload"
+                            className="mt-1 w-10 h-10 rounded-xl border border-dashed border-slate-300 hover:border-indigo-400 bg-white hover:bg-indigo-50 flex items-center justify-center text-slate-400 hover:text-indigo-500 transition-all shrink-0 group/upload"
                             title="上传参考图片/视频/音频"
                           >
                             <Plus size={17} strokeWidth={2} className="group-hover/upload:scale-110 transition-transform" />
                           </button>
                           )}
-                          <textarea value={prompt} onChange={(e) => setPrompt(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleGenerate(); } }} placeholder="输入你想要生成的内容描述..." className="w-full bg-transparent text-gray-900 placeholder-gray-400 text-[15px] p-2 resize-none focus:outline-none custom-scrollbar font-medium" rows={2} style={{ minHeight: '52px', maxHeight: '140px' }} />
+                          <textarea value={prompt} onChange={(e) => setPrompt(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleGenerate(); } }} placeholder="输入你想要生成的内容描述..." className="w-full bg-transparent text-slate-900 placeholder-slate-400 text-[14px] p-2 resize-none focus:outline-none custom-scrollbar font-medium leading-relaxed" rows={2} style={{ minHeight: '58px', maxHeight: '140px' }} />
                         </div>
                         
-                        <div className="flex items-center justify-between mt-3 pt-3 border-t border-gray-100">
+                        <div className="flex items-center justify-between mt-3">
                           <div className="flex-1 pr-3">
                             <div className="relative w-full">
-                              <div onClick={() => setOpenModelDropdownId(isThisModelDropdownOpen ? null : node.id)} className="h-[36px] w-full flex items-center justify-between text-gray-800 bg-white hover:bg-gray-50 border border-gray-200 px-3 transition-colors text-[13px] font-bold cursor-pointer shadow-sm rounded-lg">
-                                <span className="flex items-center">{renderApiIcon(currentApi)}<span className="ml-1 truncate w-[130px]">{currentApi}</span></span>
+                              <div onClick={() => setOpenModelDropdownId(isThisModelDropdownOpen ? null : node.id)} className="h-[38px] w-full flex items-center justify-between text-slate-700 bg-white hover:bg-slate-50 border border-slate-200 px-3 transition-colors text-[12px] font-bold cursor-pointer rounded-xl">
+                                <span className="flex items-center"><span className="text-[9px] text-slate-400 font-bold mr-2 uppercase tracking-wider">Model</span>{renderApiIcon(currentApi)}<span className="ml-1 truncate w-[128px]">{currentApi}</span></span>
                                 <ChevronDown size={14} strokeWidth={2} className="text-gray-400 ml-1" />
                               </div>
 
@@ -923,7 +938,7 @@ export default function App() {
                             </div>
                           </div>
 
-                          <div className="flex items-center h-[36px] bg-gray-50 rounded-lg p-0.5 border border-gray-100 shrink-0 relative">
+                          <div className="flex items-center h-[38px] bg-slate-50 rounded-xl p-0.5 border border-slate-200 shrink-0 relative">
                             <button className="flex items-center justify-center w-8 h-full rounded-md transition-all text-gray-500 hover:text-indigo-600 hover:bg-white hover:shadow-sm" title="语音输入"><Mic size={16} strokeWidth={2} /></button>
                             <div className="w-px h-5 bg-gray-200 mx-1"></div>
 
@@ -949,7 +964,7 @@ export default function App() {
                               <span>{dynamicCredits}</span>
                             </div>
                             <div className="w-px h-5 bg-gray-200 mx-1"></div>
-                            <button onClick={handleGenerate} className={`w-9 h-full rounded-md flex items-center justify-center transition-all duration-300 shadow-sm ${isGenerating ? 'bg-gray-200 text-gray-400 cursor-not-allowed' : 'bg-gray-900 text-white hover:bg-black cursor-pointer'}`} title="执行生成任务"><ArrowUp size={16} strokeWidth={2.5} /></button>
+                            <button onClick={handleGenerate} className={`w-10 h-full rounded-[10px] flex items-center justify-center transition-all duration-300 ${isGenerating ? 'bg-slate-200 text-slate-400 cursor-not-allowed' : 'bg-indigo-600 text-white hover:bg-indigo-700 cursor-pointer shadow-[0_8px_18px_rgba(79,70,229,0.25)]'}`} title="执行生成任务"><ArrowUp size={16} strokeWidth={2.5} /></button>
                           </div>
                         </div>
 
@@ -1024,34 +1039,41 @@ export default function App() {
             </div>
             
             {/* 左侧悬浮面板 (UI 层) */}
-            <div className="absolute top-24 left-6 z-[100] flex items-start space-x-3 pointer-events-none">
+            <div className="absolute top-24 left-6 z-[100] flex items-start space-x-4 pointer-events-none">
               
               {/* 主侧边栏 */}
-              <div className="w-16 bg-white border border-gray-100 py-4 flex flex-col items-center shadow-xl pointer-events-auto min-h-[460px] rounded-[2rem]">
-                <button onClick={() => setActiveSidebar(activeSidebar === 'nodes' ? null : 'nodes')} className={`w-[60px] h-[60px] rounded-full flex items-center justify-center transition-all mb-4 ${activeSidebar === 'nodes' ? 'bg-indigo-600 text-white shadow-xl scale-110' : 'bg-gradient-to-tr from-indigo-500 to-purple-500 text-white hover:scale-105 shadow-lg'}`} title="添加节点">
-                  <PlusCircle size={44} strokeWidth={1.5} />
-                </button>
-                <div className="flex flex-col space-y-3 w-full px-2 items-center">
-                   <button onClick={() => setActiveSidebar(activeSidebar === 'assets' ? null : 'assets')} className={`w-11 h-11 rounded-[14px] flex items-center justify-center transition-colors ${activeSidebar === 'assets' ? 'bg-indigo-50 text-indigo-600 border border-indigo-100/50 shadow-sm' : 'text-gray-400 hover:text-indigo-600 hover:bg-gray-50'}`} title="资产库"><FolderOpen size={22} strokeWidth={1.5}/></button>
-                   <button onClick={() => setActiveSidebar(activeSidebar === 'history' ? null : 'history')} className={`w-11 h-11 rounded-[14px] flex items-center justify-center transition-colors ${activeSidebar === 'history' ? 'bg-indigo-50 text-indigo-600 border border-indigo-100/50 shadow-sm' : 'text-gray-400 hover:text-indigo-600 hover:bg-gray-50'}`} title="生成历史"><History size={22} strokeWidth={1.5}/></button>
+              <div className="w-[72px] bg-white/95 border border-slate-200/80 py-3 flex flex-col items-center shadow-[0_24px_70px_rgba(15,23,42,0.12)] pointer-events-auto min-h-[480px] rounded-[24px] backdrop-blur-2xl">
+                <div className="w-10 h-10 mb-4 rounded-[14px] bg-gradient-to-br from-indigo-400 via-indigo-500 to-violet-600 flex items-center justify-center text-white shadow-[0_10px_30px_rgba(79,70,229,0.45)]">
+                  <Sparkles size={19} strokeWidth={2.2} />
                 </div>
-                <div className="w-8 border-b border-gray-100 my-4"></div>
-                <button onClick={() => setIsTeamModalOpen(true)} className="w-11 h-11 rounded-[14px] flex items-center justify-center text-gray-400 hover:text-indigo-600 hover:bg-gray-50 transition-colors pointer-events-auto" title="团队沟通"><MessageSquare size={22} strokeWidth={1.5}/></button>
-                <div className="mt-auto pt-4 border-t border-gray-100 w-full flex flex-col items-center space-y-3 px-2">
-                  <button onClick={() => setIsProfileModalOpen(true)} className="w-11 h-11 rounded-full flex items-center justify-center text-gray-400 hover:text-indigo-600 hover:bg-gray-50 transition-colors pointer-events-auto" title="个人中心"><UserCircle size={24} strokeWidth={1.5}/></button>
-                  <button onClick={() => setIsSettingsModalOpen(true)} className="w-11 h-11 rounded-full bg-gray-50 text-gray-500 flex items-center justify-center hover:bg-gray-100 transition-colors pointer-events-auto" title="设置"><Settings size={18}/></button>
+                <button onClick={() => setActiveSidebar(activeSidebar === 'nodes' ? null : 'nodes')} className={`relative w-12 h-12 rounded-[16px] flex items-center justify-center transition-all mb-3 ${activeSidebar === 'nodes' ? 'bg-indigo-600 text-white shadow-[0_10px_30px_rgba(79,70,229,0.28)]' : 'bg-indigo-50 text-indigo-600 hover:bg-indigo-100 hover:-translate-y-0.5 border border-indigo-100'}`} title="添加节点">
+                  <PlusCircle size={27} strokeWidth={1.8} />
+                  {activeSidebar === 'nodes' && <span className="absolute -right-[13px] w-1 h-6 rounded-full bg-indigo-400" />}
+                </button>
+                <div className="flex flex-col space-y-2 w-full px-3 items-center">
+                   <button onClick={() => setActiveSidebar(activeSidebar === 'assets' ? null : 'assets')} className={`relative w-11 h-11 rounded-[14px] flex items-center justify-center transition-all ${activeSidebar === 'assets' ? 'bg-indigo-50 text-indigo-600 border border-indigo-100 shadow-sm' : 'text-slate-400 hover:text-indigo-600 hover:bg-slate-50'}`} title="资产库"><FolderOpen size={21} strokeWidth={1.7}/>{activeSidebar === 'assets' && <span className="absolute -right-[11px] w-1 h-5 rounded-full bg-indigo-400" />}</button>
+                   <button onClick={() => setActiveSidebar(activeSidebar === 'history' ? null : 'history')} className={`relative w-11 h-11 rounded-[14px] flex items-center justify-center transition-all ${activeSidebar === 'history' ? 'bg-indigo-50 text-indigo-600 border border-indigo-100 shadow-sm' : 'text-slate-400 hover:text-indigo-600 hover:bg-slate-50'}`} title="生成历史"><History size={21} strokeWidth={1.7}/>{activeSidebar === 'history' && <span className="absolute -right-[11px] w-1 h-5 rounded-full bg-indigo-400" />}</button>
+                </div>
+                <div className="w-8 border-b border-slate-200 my-4"></div>
+                <button onClick={() => setIsTeamModalOpen(true)} className="w-11 h-11 rounded-[14px] flex items-center justify-center text-slate-400 hover:text-indigo-600 hover:bg-slate-50 transition-all pointer-events-auto" title="团队沟通"><MessageSquare size={21} strokeWidth={1.7}/></button>
+                <div className="mt-auto pt-4 border-t border-slate-200 w-full flex flex-col items-center space-y-2 px-3">
+                  <button onClick={() => setIsProfileModalOpen(true)} className="w-11 h-11 rounded-[14px] flex items-center justify-center text-slate-400 hover:text-indigo-600 hover:bg-slate-50 transition-all pointer-events-auto" title="个人中心"><UserCircle size={22} strokeWidth={1.7}/></button>
+                  <button onClick={() => setIsSettingsModalOpen(true)} className="w-11 h-11 rounded-[14px] bg-slate-50 text-slate-400 flex items-center justify-center hover:bg-indigo-50 hover:text-indigo-600 transition-all pointer-events-auto" title="设置"><Settings size={18}/></button>
                 </div>
               </div>
 
               {/* 扩展面板: 添加节点 */}
               {activeSidebar === 'nodes' && (
-                <div className="w-[300px] bg-white border border-gray-100 rounded-[28px] p-6 shadow-2xl flex flex-col pointer-events-auto backdrop-blur-xl animate-fade-in h-fit">
-                  <div className="mb-5"><span className="text-[15px] font-bold text-gray-500">添加节点</span></div>
-                  <div className="space-y-1">
-                    <button onClick={() => handleAddNode(null, 'text')} className="flex items-center p-2.5 rounded-2xl hover:bg-gray-50 transition-colors group text-left w-full border border-transparent"><div className="w-14 h-14 rounded-2xl bg-gray-50/80 border border-gray-100 flex items-center justify-center mr-4 group-hover:bg-white group-hover:shadow-sm transition-all"><AlignLeft size={24} className="text-gray-600 group-hover:text-indigo-600" strokeWidth={1.5}/></div><div className="flex flex-col"><span className="text-[16px] font-bold text-gray-800">文本</span><span className="text-[12px] text-gray-400 mt-1 font-medium tracking-wide">剧本、创意文案</span></div></button>
-                    <button onClick={() => handleAddNode(null, 'image')} className="flex items-center p-2.5 rounded-2xl hover:bg-gray-50 transition-colors group text-left w-full border border-transparent"><div className="w-14 h-14 rounded-2xl bg-gray-50/80 border border-gray-100 flex items-center justify-center mr-4 group-hover:bg-white group-hover:shadow-sm transition-all"><ImageIcon size={24} className="text-gray-600 group-hover:text-indigo-600" strokeWidth={1.5}/></div><div className="flex flex-col"><span className="text-[16px] font-bold text-gray-800">图像</span><span className="text-[12px] text-gray-400 mt-1 font-medium tracking-wide">关键帧分镜、参考图</span></div></button>
-                    <button onClick={() => handleAddNode(null, 'video')} className="flex items-center p-2.5 rounded-2xl hover:bg-gray-50 transition-colors group text-left w-full border border-transparent"><div className="w-14 h-14 rounded-2xl bg-gray-50/80 border border-gray-100 flex items-center justify-center mr-4 group-hover:bg-white group-hover:shadow-sm transition-all"><PlaySquare size={24} className="text-gray-600 group-hover:text-indigo-600" strokeWidth={1.5}/></div><span className="text-[16px] font-bold text-gray-800">视频流</span></button>
-                    <button onClick={() => handleAddNode(null, 'audio')} className="flex items-center p-2.5 rounded-2xl hover:bg-gray-50 transition-colors group text-left w-full border border-transparent"><div className="w-14 h-14 rounded-2xl bg-gray-50/80 border border-gray-100 flex items-center justify-center mr-4 group-hover:bg-white group-hover:shadow-sm transition-all"><AudioWaveform size={24} className="text-gray-600 group-hover:text-indigo-600" strokeWidth={1.5}/></div><span className="text-[16px] font-bold text-gray-800">音效配乐</span></button>
+                <div className="w-[324px] bg-white/94 border border-slate-200/80 rounded-[26px] p-5 shadow-[0_28px_80px_rgba(15,23,42,0.18)] flex flex-col pointer-events-auto backdrop-blur-2xl animate-fade-in h-fit">
+                  <div className="flex items-center justify-between mb-4 px-1">
+                    <div><span className="text-[16px] font-extrabold text-slate-900">创作节点</span><p className="text-[11px] text-slate-400 mt-1">选择一种能力添加到画布</p></div>
+                    <span className="text-[10px] font-bold text-indigo-600 bg-indigo-50 border border-indigo-100 px-2 py-1 rounded-full">4 TYPES</span>
+                  </div>
+                  <div className="space-y-2">
+                    <button onClick={() => handleAddNode(null, 'text')} className="sidebar-node-item group"><div className="sidebar-node-icon bg-indigo-50 text-indigo-600"><AlignLeft size={21} strokeWidth={1.8}/></div><div className="flex flex-col flex-1"><span className="sidebar-node-title">文本脚本</span><span className="sidebar-node-desc">大纲、脚本与创意文案</span></div><span className="sidebar-node-shortcut">T</span></button>
+                    <button onClick={() => handleAddNode(null, 'image')} className="sidebar-node-item group"><div className="sidebar-node-icon bg-sky-50 text-sky-600"><ImageIcon size={21} strokeWidth={1.8}/></div><div className="flex flex-col flex-1"><span className="sidebar-node-title">图像生成</span><span className="sidebar-node-desc">关键帧、分镜与参考图</span></div><span className="sidebar-node-shortcut">I</span></button>
+                    <button onClick={() => handleAddNode(null, 'video')} className="sidebar-node-item group"><div className="sidebar-node-icon bg-violet-50 text-violet-600"><PlaySquare size={21} strokeWidth={1.8}/></div><div className="flex flex-col flex-1"><span className="sidebar-node-title">视频生成</span><span className="sidebar-node-desc">动态镜头与视频片段</span></div><span className="sidebar-node-shortcut">V</span></button>
+                    <button onClick={() => handleAddNode(null, 'audio')} className="sidebar-node-item group"><div className="sidebar-node-icon bg-amber-50 text-amber-600"><AudioWaveform size={21} strokeWidth={1.8}/></div><div className="flex flex-col flex-1"><span className="sidebar-node-title">音效配乐</span><span className="sidebar-node-desc">氛围音乐与声音设计</span></div><span className="sidebar-node-shortcut">A</span></button>
                   </div>
                 </div>
               )}
@@ -1285,7 +1307,7 @@ export default function App() {
             </div>
 
             {/* 左下角视口控制 */}
-            <div className="absolute bottom-6 left-6 flex items-center space-x-2 bg-white/90 backdrop-blur-md border border-gray-200/80 rounded-full p-1.5 shadow-lg pointer-events-auto z-[100]">
+            <div className="absolute bottom-6 left-6 flex items-center space-x-2 glass-panel rounded-full p-1.5 pointer-events-auto z-[100]">
               <button onClick={handleAutoGroup} className="flex items-center space-x-1.5 px-3 py-1.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-600 rounded-full transition-colors font-bold text-xs"><BoxSelect size={14} strokeWidth={2} /><span>框选编组</span></button>
               <div className="w-px h-4 bg-gray-200 mx-1"></div>
               <button onClick={resetView} className="w-7 h-7 rounded-full flex items-center justify-center text-gray-400 hover:text-gray-900 hover:bg-gray-100 transition-colors"><Home size={14}/></button>
@@ -1312,7 +1334,7 @@ export default function App() {
             </div>
 
             {/* 右下角缩放指示器 */}
-            <div className="absolute bottom-6 right-6 flex items-center space-x-2 bg-white/90 backdrop-blur-md border border-gray-200/80 rounded-full px-3 py-1.5 shadow-lg pointer-events-auto z-[100]">
+            <div className="absolute bottom-6 right-6 flex items-center space-x-2 glass-panel rounded-full px-3 py-1.5 pointer-events-auto z-[100]">
               <button onClick={() => { const z = Math.max(0.1, zoom - 0.15); zoomRef.current = z; setZoom(z); setPan(p => ({ x: p.x, y: p.y })); }} className="w-6 h-6 rounded-full flex items-center justify-center text-gray-400 hover:text-gray-900 hover:bg-gray-100 transition-colors text-sm font-bold">−</button>
               <span className="text-xs font-bold text-gray-600 w-12 text-center select-none">{Math.round(zoom * 100)}%</span>
               <button onClick={() => { const z = Math.min(5, zoom + 0.15); zoomRef.current = z; setZoom(z); setPan(p => ({ x: p.x, y: p.y })); }} className="w-6 h-6 rounded-full flex items-center justify-center text-gray-400 hover:text-gray-900 hover:bg-gray-100 transition-colors text-sm font-bold">+</button>
@@ -1432,7 +1454,7 @@ export default function App() {
         {/* Header Left */}
         <div className="flex items-center space-x-3 cursor-pointer group pointer-events-auto">
           <div className="w-8 h-8 relative group-hover:scale-110 transition-transform duration-300">
-            <div className="absolute w-[1.35rem] h-[1.35rem] left-0 top-0 rounded-full bg-gradient-to-tr from-[#FF6B6B] via-[#845EC2] to-[#4FACFE]"></div>
+            <div className="absolute w-[1.35rem] h-[1.35rem] left-0 top-0 rounded-full bg-gradient-to-tr from-indigo-700 via-indigo-500 to-sky-400"></div>
             <div className="absolute w-[1.65rem] h-[1.65rem] right-0 bottom-0 rounded-full bg-white/20 backdrop-blur-md border border-white/40 shadow-sm flex items-center justify-center overflow-hidden">
               <div className="absolute inset-0 bg-gradient-to-br from-white/30 to-transparent opacity-60"></div>
               <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 text-white relative z-10 drop-shadow-sm"><path d="M 12 0 C 12 10, 14 12, 24 12 C 14 12, 12 14, 12 24 C 12 14, 10 12, 0 12 C 10 12, 12 10, 12 0 Z" fill="currentColor" /></svg>
@@ -1442,27 +1464,27 @@ export default function App() {
         </div>
 
         {/* Header Center */}
-        <div className="absolute left-1/2 -translate-x-1/2 flex items-center bg-white/90 backdrop-blur-md p-1.5 rounded-2xl shadow-sm border border-gray-200/80 pointer-events-auto">
-          <button onClick={() => { setViewMode('canvas'); showMessage("已切换至 无边界创意画布"); }} className={`flex items-center space-x-2 px-4 py-1.5 rounded-lg text-xs font-bold transition-all ${viewMode === 'canvas' ? 'bg-gray-100 text-gray-900 shadow-inner' : 'text-gray-500 hover:text-gray-800 hover:bg-gray-50'}`}>
+        <div className="absolute left-1/2 -translate-x-1/2 flex items-center glass-panel p-1.5 rounded-2xl pointer-events-auto">
+          <button onClick={() => { setViewMode('canvas'); showMessage("已切换至 无边界创意画布"); }} className={`top-view-chip ${viewMode === 'canvas' ? 'top-view-chip-active' : ''}`}>
             <LayoutGrid size={14} strokeWidth={2} /><span>无限画布</span>
           </button>
-          <button onClick={() => { setViewMode('storyboard'); showMessage("已切换至 工业级故事板分镜表"); }} className={`flex items-center space-x-2 px-4 py-1.5 rounded-lg text-xs font-bold transition-all ${viewMode === 'storyboard' ? 'bg-gray-100 text-gray-900 shadow-inner' : 'text-gray-500 hover:text-gray-800 hover:bg-gray-50'}`}>
+          <button onClick={() => { setViewMode('storyboard'); showMessage("已切换至 工业级故事板分镜表"); }} className={`top-view-chip ${viewMode === 'storyboard' ? 'top-view-chip-active' : ''}`}>
             <ListTree size={14} strokeWidth={2} /><span>故事板视图</span>
           </button>
           <div className="w-px h-4 bg-gray-200 mx-1"></div>
           {/* 品牌风格管理器按钮 */}
-          <button onClick={() => setIsBrandStyleModalOpen(true)} className={`flex items-center space-x-2 px-4 py-1.5 rounded-lg text-xs font-bold transition-all ${isBrandStyleModalOpen ? 'bg-gray-100 text-gray-900 shadow-inner' : 'text-gray-500 hover:text-gray-800 hover:bg-gray-50'}`}>
+          <button onClick={() => setIsBrandStyleModalOpen(true)} className={`top-view-chip ${isBrandStyleModalOpen ? 'top-view-chip-active' : ''}`}>
             <Command size={14} strokeWidth={2.5} /><span>品牌风格智控</span>
           </button>
         </div>
         
         {/* Header Right */}
         <div className="flex items-center space-x-3 pointer-events-auto">
-          <button onClick={() => setIsPricingOpen(true)} className="flex items-center space-x-2 bg-white/90 backdrop-blur-md border border-gray-200/80 rounded-full px-3 py-1.5 shadow-sm cursor-pointer hover:bg-gray-50 transition-colors">
+          <button onClick={() => setIsPricingOpen(true)} className="flex items-center space-x-2 glass-panel rounded-full px-3 py-1.5 cursor-pointer hover:bg-white hover:-translate-y-0.5 transition-all">
             <Zap size={14} className="text-indigo-500" strokeWidth={1.5} />
             <span className="text-xs font-mono font-bold text-gray-700">{credits.toLocaleString()}</span>
           </button>
-          <button onClick={() => setIsTeamModalOpen(true)} className="flex items-center space-x-2 bg-white/90 backdrop-blur-md border border-gray-200/80 rounded-full px-4 py-1.5 shadow-sm hover:bg-gray-50 hover:text-indigo-600 transition-colors group">
+          <button onClick={() => setIsTeamModalOpen(true)} className="flex items-center space-x-2 glass-panel rounded-full px-4 py-1.5 hover:bg-white hover:text-indigo-600 hover:-translate-y-0.5 transition-all group">
             <Users size={14} className="text-gray-500 group-hover:text-indigo-600 transition-colors" strokeWidth={1.5} />
             <span className="text-xs font-medium text-gray-700 group-hover:text-indigo-600 transition-colors">团队协作</span>
           </button>

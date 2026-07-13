@@ -3,8 +3,185 @@
 /* Custom scrollbar */
 .custom-scrollbar::-webkit-scrollbar { height: 0px; width: 0px; }
 
-/* Dot pattern for canvas */
-.dot-pattern { background-image: radial-gradient(rgba(0, 0, 0, 0.06) 1.5px, transparent 1.5px); background-size: 32px 32px; }
+/* Dot pattern for canvas — 更轻、更像专业设计工具 */
+.dot-pattern {
+  background-color: #F4F6FB;
+  background-image:
+    radial-gradient(rgba(79, 70, 229, 0.075) 1px, transparent 1px),
+    linear-gradient(rgba(255,255,255,0.7), rgba(255,255,255,0));
+  background-size: 28px 28px, 100% 100%;
+}
+
+.glass-panel {
+  background: rgba(255, 255, 255, 0.82);
+  backdrop-filter: blur(18px);
+  border: 1px solid rgba(226, 232, 240, 0.82);
+  box-shadow: 0 18px 45px rgba(15, 23, 42, 0.08);
+}
+
+.premium-node {
+  box-shadow: 0 18px 45px rgba(15, 23, 42, 0.07);
+}
+
+.premium-node:hover {
+  box-shadow: 0 22px 55px rgba(15, 23, 42, 0.10);
+}
+
+.premium-toolbar {
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(226, 232, 240, 0.92);
+  box-shadow: 0 14px 36px rgba(15, 23, 42, 0.10);
+}
+
+/* Left creation dock */
+.sidebar-node-item {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  border-radius: 18px;
+  border: 1px solid transparent;
+  text-align: left;
+  transition: all 180ms ease;
+}
+
+.sidebar-node-item:hover {
+  background: #f8fafc;
+  border-color: #e2e8f0;
+  transform: translateX(2px);
+}
+
+.sidebar-node-icon {
+  width: 46px;
+  height: 46px;
+  border-radius: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 12px;
+}
+
+.sidebar-node-title { color: #0f172a; font-size: 14px; font-weight: 800; }
+.sidebar-node-desc { color: #94a3b8; font-size: 11px; font-weight: 500; margin-top: 3px; }
+.sidebar-node-shortcut {
+  width: 23px;
+  height: 23px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #94a3b8;
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  font-size: 10px;
+  font-weight: 800;
+}
+
+/* AI Director quick actions */
+.director-action-card {
+  min-height: 72px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: 10px;
+  border-radius: 15px;
+  border: 1px solid #e2e8f0;
+  background: #ffffff;
+  color: #475569;
+  font-size: 10px;
+  font-weight: 800;
+  transition: all 180ms ease;
+}
+
+.director-action-card:hover {
+  border-color: #c7d2fe;
+  color: #4f46e5;
+  background: #f8faff;
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px rgba(79, 70, 229, 0.10);
+}
+
+.director-action-icon {
+  width: 29px;
+  height: 29px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Softer controls: tags instead of heavy buttons */
+.canvas-chip {
+  padding: 6px 12px;
+  border-radius: 999px;
+  border: 1px solid #e2e8f0;
+  background: rgba(255, 255, 255, 0.72);
+  color: #64748b;
+  font-size: 11px;
+  font-weight: 700;
+  transition: all 160ms ease;
+}
+
+.canvas-chip:hover {
+  color: #4f46e5;
+  border-color: #c7d2fe;
+  background: #f8faff;
+  transform: translateY(-1px);
+}
+
+.canvas-chip-active {
+  color: #4f46e5;
+  border-color: #c7d2fe;
+  background: #eef2ff;
+  box-shadow: 0 5px 14px rgba(79, 70, 229, 0.10);
+}
+
+.soft-action-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 11px;
+  border-radius: 999px;
+  border: 1px solid #e2e8f0;
+  background: rgba(255, 255, 255, 0.78);
+  backdrop-filter: blur(10px);
+  font-size: 11px;
+  font-weight: 800;
+  transition: all 160ms ease;
+}
+
+.soft-action-chip:hover {
+  border-color: #cbd5e1;
+  background: #ffffff;
+  transform: translateY(-1px);
+  box-shadow: 0 7px 18px rgba(15, 23, 42, 0.08);
+}
+
+.top-view-chip {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 14px;
+  border-radius: 999px;
+  color: #64748b;
+  font-size: 12px;
+  font-weight: 700;
+  transition: all 160ms ease;
+}
+
+.top-view-chip:hover {
+  color: #334155;
+  background: rgba(248, 250, 252, 0.86);
+}
+
+.top-view-chip-active {
+  color: #4f46e5;
+  background: #ffffff;
+  border: 1px solid #e0e7ff;
+  box-shadow: 0 5px 16px rgba(79, 70, 229, 0.09);
+}
 
 /* Toast animation */
 @keyframes fadeInUp { from { opacity: 0; transform: translate(-50%, 20px); } to { opacity: 1; transform: translate(-50%, 0); } }
