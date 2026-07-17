@@ -30,6 +30,7 @@ export default function VideoStudioAssistant({ isOpen, onClose, onDeploy, worker
   const [selectedModel, setSelectedModel] = useState('Nano Banana Pro'); // 当前模型
   const [modelTab, setModelTab] = useState('Image');        // 模型面板当前标签
   const [autoMode, setAutoMode] = useState(false);          // 自动模式开关
+  const [textTask, setTextTask] = useState('assistant');    // 文本任务类型
 
   // ==========================================
   // 3. 模型数据 — 立方体图标打开的三栏面板
@@ -102,6 +103,9 @@ export default function VideoStudioAssistant({ isOpen, onClose, onDeploy, worker
       reference: '帮我查找并描述几个适合以下画面的视觉参考图',
       opening: '帮我创作一个引人入胜的视频开场白，适合广告短片',
     };
+    setModelTab('Text');
+    setSelectedModel('Gemini Pro');
+    setTextTask(action);
     setChatInput(prompts[action] || '');
   };
 
@@ -140,7 +144,7 @@ export default function VideoStudioAssistant({ isOpen, onClose, onDeploy, worker
         }
       } else {
         // --- 文本生成 ---
-        const result = await callWorker('text', { prompt: userText, actionType: 'expand' });
+        const result = await callWorker('text', { prompt: userText, actionType: textTask });
         if (result.success) {
           setMessages(prev => [...prev, {
             id: Date.now() + 1, role: 'ai', type: 'text',  // type: 'text' → 显示文字气泡
@@ -153,6 +157,7 @@ export default function VideoStudioAssistant({ isOpen, onClose, onDeploy, worker
     } catch (err) {
       setMessages(prev => [...prev, { id: Date.now() + 1, role: 'ai', type: 'text', content: `请求失败：${err.message}` }]);
     }
+    setTextTask('assistant');
     setIsTyping(false);
   };
 
